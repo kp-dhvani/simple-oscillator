@@ -8,11 +8,13 @@
     "@testing-library/user-event": "^13.5.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "react-scripts": "5.0.1",
+    "react-scripts": "^5.0.1",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "launch": "react-scripts start",
+    "start": "concurrently \"npm run watch-cpp\" \"npm run launch\"",
+    "watch-cpp": "nodemon --watch src/cpp --exec 'bash build-cpp-to-wasm.sh' ",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
@@ -34,5 +36,11 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "overrides": {
+    "graceful-fs": "^4.2.11"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
   }
 }
