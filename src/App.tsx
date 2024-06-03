@@ -1,11 +1,12 @@
+import React from 'react';
 import './App.css';
-import Add from './components/Add';
+import AudioContext from './components/AudioContext';
 
 function App() {
   return (
     <div className="App">
       <p>Simple Synth</p>
-      <Add/>
+      <AudioContext/>
     </div>
   );
 }

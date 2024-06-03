@@ -10,5 +10,5 @@ for file in $CPP_DIR/*.cpp; do
     extension="${filename##*.}"
     filename="${filename%.*}"
 
-    emcc -O2 -s WASM=1 $file -o $OUTPUT_DIR/$filename.wasm --no-entry -s STANDALONE_WASM
+    emcc -O2 -s WASM=1 $file -o $OUTPUT_DIR/$filename.wasm --no-entry -s STANDALONE_WASM -s EXPORTED_FUNCTIONS="['_malloc']"
 done

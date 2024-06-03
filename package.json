@@ -3,17 +3,16 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@testing-library/jest-dom": "^5.17.0",
-    "@testing-library/react": "^13.4.0",
-    "@testing-library/user-event": "^13.5.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "react-draggable": "^4.4.6",
     "react-scripts": "^5.0.1",
+    "typescript": "^5.4.5",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
     "launch": "react-scripts start",
-    "start": "concurrently \"npm run watch-cpp\" \"npm run launch\"",
+    "start": "concurrently \"yarn watch-cpp\" \"yarn launch\"",
     "watch-cpp": "nodemon --watch src/cpp --exec 'bash build-cpp-to-wasm.sh' ",
     "build": "react-scripts build",
     "test": "react-scripts test",
@@ -41,6 +40,17 @@
     "graceful-fs": "^4.2.11"
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^5.17.0",
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/user-event": "^13.5.0",
+    "@types/jest": "^29.5.12",
+    "@types/node": "^20.13.0",
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
     "concurrently": "^8.2.2"
-  }
+  },
+  "main": "index.js",
+  "repository": "https://github.com/Ashirogi-Muto/simple-synth.git",
+  "author": "Kshitij Pandey <kshitijpandey32@gmail.com>",
+  "license": "MIT"
 }
