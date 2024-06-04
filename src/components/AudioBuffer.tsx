@@ -1,7 +1,7 @@
 import React from 'react';
 
 /**
- * 
+ *
  * An AudioBuffer is defined with three parameters:
  * the number of channels (1 for mono, 2 for stereo, etc.),
  * its length, meaning the number of sample frames inside the buffer,
@@ -18,19 +18,17 @@ import React from 'react';
  * The higher the sample rate, the better the sound quality.
  */
 interface AudioBufferProps {
-    length: number;
-    sampleRate: number;
-    numberOfChannels: number
+  length: number;
+  sampleRate: number;
+  numberOfChannels: number;
 }
 
 const AudioBuffer: React.FC<AudioBufferProps> = ({
-    length,
-    sampleRate,
-    numberOfChannels = 1
+  length,
+  sampleRate,
+  numberOfChannels = 1,
 }) => {
-    return (
-        <p>Audio Buffer</p>
-    )
-}
+  return <p>Audio Buffer</p>;
+};
 
 export default AudioBuffer;

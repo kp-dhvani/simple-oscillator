@@ -1,16 +1,20 @@
 interface PeriodicWaveComponentProps {
-    audioContext: AudioContext;
-    real: Float32Array
-    imag: Float32Array
+  audioContext: AudioContext;
+  real: Float32Array;
+  imag: Float32Array;
 }
 
-const PeriodicWaveComponent = ({ audioContext, real, imag }: PeriodicWaveComponentProps): PeriodicWave => {
-    const wave = new PeriodicWave(audioContext, {
-        real,
-        imag,
-    });
+const PeriodicWaveComponent = ({
+  audioContext,
+  real,
+  imag,
+}: PeriodicWaveComponentProps): PeriodicWave => {
+  const wave = new PeriodicWave(audioContext, {
+    real,
+    imag,
+  });
 
-    return wave;
-}
+  return wave;
+};
 
 export default PeriodicWaveComponent;

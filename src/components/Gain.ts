@@ -1,12 +1,12 @@
 interface GainProps {
-    audioContext: AudioContext
+  audioContext: AudioContext;
 }
 
 const Gain = ({ audioContext }: GainProps): GainNode => {
-    const gain = new GainNode(audioContext, {
-        gain: 1
-    });
-    return gain;
-}
+  const gain = new GainNode(audioContext, {
+    gain: 1,
+  });
+  return gain;
+};
 
 export default Gain;

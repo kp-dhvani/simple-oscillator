@@ -1,11 +1,14 @@
 ### Example: If you have 10000 frames and the sample rate is 44100 Hz:
+
 Time in seconds = Number of frames / Sample rate
-                = 10000 frames / 44100 samples per second
-                ≈ 0.2268 seconds
+= 10000 frames / 44100 samples per second
+≈ 0.2268 seconds
+
 ### Example: If you have 10000 samples and the audio is stereo (2 channels):
-   Number of frames = Number of samples / Channel count
-                  = 10000 samples / 2 channels
-                  = 5000 frames
+
+Number of frames = Number of samples / Channel count
+= 10000 samples / 2 channels
+= 5000 frames
 
 Aliasing: Aliasing occurs when frequencies above the Nyquist frequency (half the sampling rate) fold back into the audible frequency range, causing distortion in the reconstructed audio signal. To avoid aliasing, frequencies above the Nyquist frequency must be attenuated or removed before sampling.
 
@@ -15,7 +18,7 @@ Transition Band: The transition band is the frequency range between the passband
 
 Sampling Theorem: The Nyquist-Shannon sampling theorem states that to accurately represent an analog signal in digital form, the sampling rate must be at least twice the highest frequency present in the signal. By applying a low-pass filter to remove frequencies above the Nyquist frequency before sampling, we ensure that the sampled signal does not contain aliased frequencies.
 
- In digital audio, 44,100 Hz (alternately represented as 44.1 kHz) is a common sampling frequency. Why 44.1 kHz?
+In digital audio, 44,100 Hz (alternately represented as 44.1 kHz) is a common sampling frequency. Why 44.1 kHz?
 
 Firstly, because the hearing range of human ears is roughly 20 Hz to 20,000 Hz. Via the Nyquist–Shannon sampling theorem, the sampling frequency must be greater than twice the maximum frequency one wishes to reproduce. Therefore, the sampling rate has to be greater than 40,000 Hz.
 

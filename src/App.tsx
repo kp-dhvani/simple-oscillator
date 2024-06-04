@@ -4,9 +4,9 @@ import AudioContext from './components/AudioContext';
 
 function App() {
   return (
-    <div className="App">
+    <div className='App'>
       <p>Simple Synth</p>
-      <AudioContext/>
+      <AudioContext />
     </div>
   );
 }
