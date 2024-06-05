@@ -1,7 +1,4 @@
-import React, { useEffect, useState } from 'react';
-import loadWasm from '../lib/loadWasm';
-import Oscillator from './Oscillator';
-import PeriodicWaveComponent from './PeriodicWave';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   DraggableEvent,
   DraggableData,
@@ -9,92 +6,74 @@ import {
 } from 'react-draggable';
 import Draggable from './Draggable';
 import SynthAudioContext from '../lib/SynthAudioContext';
+import generateSineWaveSample from '../lib/generateSample';
+const minX = -250;
+const maxX = 230;
+const minY = -250;
+const maxY = 220;
 
 const AudioContext = () => {
   const [isPlaying, setIsPlaying] = useState(false);
-  const [sineWaveWasm, setSineWaveWasm] = useState<WebAssembly.Module>();
-  const [oscillator, setOscillator] = useState<OscillatorNode>();
+  const [oscillator, setOscillator] = useState<OscillatorNode | null>();
+  const [gainNode, setGainNode] = useState<GainNode | null>();
   const { audioContextInstance } = SynthAudioContext();
   const [frequency, setFrequency] = useState(440);
-  const [amplitude, setAmplitude] = useState(1);
-  const [duration, setDuration] = useState(2);
 
-  const sampleRate = 44100; // Hz
-  const numSamples = duration * sampleRate;
+  const onDragStart: DraggableEventHandler = () => {
+    setIsPlaying(true);
+    const oscillator = audioContextInstance.createOscillator();
+    const newGainNode = audioContextInstance.createGain();
+    oscillator.type = 'sine';
+    oscillator.frequency.setValueAtTime(
+      frequency,
+      audioContextInstance.currentTime,
+    );
+    newGainNode.connect(audioContextInstance.destination);
+    oscillator.connect(newGainNode);
+    oscillator.start();
+    setOscillator(oscillator);
+    setGainNode(newGainNode);
+  };
 
-  const onDragStart: DraggableEventHandler = (event: DraggableEvent) => {
-    if (sineWaveWasm) {
-      // @ts-ignore
-      const samplesPtr = sineWaveWasm?.instance.exports.malloc(
-        numSamples * Float32Array.BYTES_PER_ELEMENT,
+  const onDragStop: DraggableEventHandler = () => {
+    if (oscillator && gainNode) {
+      gainNode.gain.setValueAtTime(
+        gainNode.gain.value,
+        audioContextInstance.currentTime,
       );
-      const samples = new Float32Array(
-        // @ts-ignore
-        sineWaveWasm?.instance.exports.memory.buffer,
-        samplesPtr,
-        numSamples,
+
+      gainNode.gain.exponentialRampToValueAtTime(
+        0.0001,
+        audioContextInstance.currentTime + 0.03,
       );
-      // @ts-ignore
-      sineWaveWasm?.instance.exports.generateSineWave(
-        frequency,
-        amplitude,
-        duration,
-        sampleRate,
-        samplesPtr,
-      );
-      const osc = Oscillator({
-        audioContext: audioContextInstance,
-        type: 'sine',
-        frequency,
-      });
-      const real = samples.slice(0, 2);
-      const imag = new Float32Array(real.length).fill(0);
-      const periodicWave = PeriodicWaveComponent({
-        audioContext: audioContextInstance,
-        real,
-        imag,
-      });
-      osc.setPeriodicWave(periodicWave);
-      osc.connect(audioContextInstance.destination);
-      osc.start();
-      setOscillator(osc);
+      setIsPlaying(false);
+      gainNode.disconnect(audioContextInstance.destination);
+      oscillator.stop();
+      oscillator.disconnect();
+      setOscillator(null);
+      setGainNode(null);
     }
   };
 
-  const onDragStop: DraggableEventHandler = (event: DraggableEvent) => {
-    oscillator?.stop();
-    oscillator?.disconnect(audioContextInstance.destination);
-  };
-
   const handleDrag = (_: DraggableEvent, data: DraggableData) => {
-    console.log({ x: data.x, y: data.y });
+    // Calculate the amplitude based on the vertical position
+    if (gainNode && oscillator) {
+      const amplitude = 1 - (2 * (data.y - minY)) / (maxY - minY);
+      gainNode.gain.setValueAtTime(amplitude, audioContextInstance.currentTime);
+    }
   };
-
-  useEffect(() => {
-    const loadAddWasm = async () => {
-      const addWasm = await loadWasm('sinewave.wasm');
-      setSineWaveWasm(addWasm);
-    };
-    loadAddWasm();
-  }, []);
 
   return (
     <>
       <div className='audio'>
         <div className='drag'>
           <Draggable
+            isPlaying={isPlaying}
             onDragStart={onDragStart}
             onDragStop={onDragStop}
             handleDrag={handleDrag}
           />
         </div>
-        {/* <div className="audio-button">
-            <button onClick={() => setIsPlaying(isPlaying => !isPlaying)}>
-                {
-                    isPlaying ? 'Stop' : 'Play'
-                }
-            </button>
-            </div> */}
       </div>
     </>
   );
