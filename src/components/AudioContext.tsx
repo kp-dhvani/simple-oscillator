@@ -18,6 +18,7 @@ const AudioContext = () => {
   const [gainNode, setGainNode] = useState<GainNode | null>();
   const { audioContextInstance } = SynthAudioContext();
   const [frequency, setFrequency] = useState(440);
+  const [amplitude, setAmplitude] = useState(0);
 
   const onDragStart: DraggableEventHandler = () => {
     setIsPlaying(true);
@@ -31,6 +32,10 @@ const AudioContext = () => {
     newGainNode.connect(audioContextInstance.destination);
     oscillator.connect(newGainNode);
     oscillator.start();
+    newGainNode.gain.setValueAtTime(
+      amplitude,
+      audioContextInstance.currentTime,
+    );
     setOscillator(oscillator);
     setGainNode(newGainNode);
   };
@@ -58,8 +63,16 @@ const AudioContext = () => {
   const handleDrag = (_: DraggableEvent, data: DraggableData) => {
     // Calculate the amplitude based on the vertical position
     if (gainNode && oscillator) {
-      const amplitude = 1 - (2 * (data.y - minY)) / (maxY - minY);
-      gainNode.gain.setValueAtTime(amplitude, audioContextInstance.currentTime);
+      const amp = 1 - (2 * (data.deltaY - minY)) / (maxY - minY);
+      gainNode.gain.setValueAtTime(amp, audioContextInstance.currentTime);
+      const freq = frequency + data.deltaX;
+      oscillator.frequency.setValueAtTime(
+        freq,
+        audioContextInstance.currentTime,
+      );
+      setAmplitude(amp);
+      setFrequency(freq);
+      console.log({ amp, freq });
     }
   };
 
