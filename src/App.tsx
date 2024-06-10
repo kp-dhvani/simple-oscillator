@@ -1,14 +1,14 @@
 import React from 'react';
 import './App.css';
-import AudioContext from './components/AudioContext';
+import Synth from './components/Synth';
 
-function App() {
+function SimpleSynth() {
   return (
-    <div className='App'>
+    <div className='Simple-Synth'>
       <p>Simple Synth</p>
-      <AudioContext />
+      <Synth />
     </div>
   );
 }
 
-export default App;
+export default SimpleSynth;

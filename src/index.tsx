@@ -2,7 +2,8 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
-import App from './App';
+import SimpleSynth from './App';
+import { SynthAudioContextProvider } from './components/SynthAudioContextProvider';
 
 const rootElement = document.getElementById('root');
 if (rootElement) {
@@ -10,7 +11,9 @@ if (rootElement) {
 
   root.render(
     <React.StrictMode>
-      <App />
+      <SynthAudioContextProvider>
+        <SimpleSynth />
+      </SynthAudioContextProvider>
     </React.StrictMode>,
   );
 }

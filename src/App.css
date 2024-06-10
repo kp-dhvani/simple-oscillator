@@ -3,22 +3,22 @@ body {
   color: #fff;
 }
 
-.App {
+.Simple-Synth {
   text-align: center;
 }
 
-.App-logo {
+.Simple-Synth-logo {
   height: 40vmin;
   pointer-events: none;
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  .App-logo {
+  .Simple-Synth-logo {
     animation: App-logo-spin infinite 20s linear;
   }
 }
 
-.App-header {
+.Simple-Synth-header {
   background-color: #282c34;
   min-height: 100vh;
   display: flex;
@@ -29,7 +29,7 @@ body {
   color: white;
 }
 
-.App-link {
+.Simple-Synth-link {
   color: #61dafb;
 }
 

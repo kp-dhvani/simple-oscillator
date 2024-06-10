@@ -114,7 +114,8 @@
     "src/**/*.ts",
     "src/index.tsx",
     "src/components/AudioBuffer.tsx",
-    "src/worklet/AudioWorkletAdapter.js"
+    "src/worklet/AudioWorkletAdapter.js",
+    "src/components/Visualiser.tsx"
   ],
   "exclude": ["node_modules"],
   "files": ["./declarations.d.ts"]

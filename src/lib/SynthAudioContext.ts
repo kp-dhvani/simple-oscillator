@@ -15,4 +15,6 @@ class SynthAudioContext {
   }
 }
 
-export default SynthAudioContext.getInstance; // Export the getInstance method
+export type SynthAudioContextType = SynthAudioContext;
+
+export const synthAudioContextInstance = SynthAudioContext.getInstance();
