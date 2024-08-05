@@ -1,6 +1,6 @@
 ### Up-mixing and down-mixing
 
-When the numbers of channels of the input and the output don't match, up-mixing, or down-mixing, must be done. The following rules, controlled by setting the {{domxref("AudioNode.channelInterpretation")}} property to `speakers` or `discrete`, apply:
+When the numbers of channels of the input and the output don't match, up-mixing, or down-mixing, must be done. The following rules, controlled by setting the AudioNode.channelInterpretation property to `speakers` or `discrete`, apply:
 
 <table class="standard-table">
   <thead>

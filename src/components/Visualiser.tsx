@@ -1,5 +1,4 @@
 import React, { useEffect, useRef } from 'react';
-import { useSynthAudioContext } from './SynthAudioContextProvider';
 
 interface VisualiserProps {
   analyser: AnalyserNode | undefined;
@@ -35,9 +34,8 @@ const Visualiser: React.FC<VisualiserProps> = ({ isPlaying, analyser }) => {
     if (isPlaying) {
       draw();
     } else {
-      if (animationFrameIdRef.current) {
+      animationFrameIdRef.current &&
         cancelAnimationFrame(animationFrameIdRef.current);
-      }
     }
   }, [isPlaying]);
 
@@ -49,7 +47,7 @@ const Visualiser: React.FC<VisualiserProps> = ({ isPlaying, analyser }) => {
       const bufferLength = analyser.frequencyBinCount;
       const dataArray = new Uint8Array(bufferLength);
       analyser.getByteTimeDomainData(dataArray);
-      canvasContext.clearRect(0, 0, width, height); // Clear the canvas
+      canvasContext.clearRect(0, 0, width, height);
       canvasContext.fillStyle = '#1C1C1D';
       canvasContext.fillRect(0, 0, width, height);
       canvasContext.strokeStyle = '#FF6577';

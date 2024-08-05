@@ -7,6 +7,7 @@ import {
 import Draggable from './Draggable';
 import Visualiser from './Visualiser';
 import { useSynthAudioContext } from './SynthAudioContextProvider';
+import WaveTypeSelector from './TypeSelector';
 
 const minY = -250;
 const maxY = 220;
@@ -19,6 +20,7 @@ const Synth = () => {
   const [analyserNode, setAnalyserNode] = useState<AnalyserNode>();
   const [frequency, setFrequency] = useState(440);
   const [amplitude, setAmplitude] = useState(0);
+  const [waveType, setWaveType] = useState<OscillatorType>('sine');
 
   useEffect(() => {
     const analyser = audioContextInstance.createAnalyser();
@@ -30,7 +32,7 @@ const Synth = () => {
     setIsPlaying(true);
     const oscillator = audioContextInstance.createOscillator();
     const newGainNode = audioContextInstance.createGain();
-    oscillator.type = 'sine';
+    oscillator.type = waveType;
     oscillator.frequency.setValueAtTime(
       frequency,
       audioContextInstance.currentTime,
@@ -70,7 +72,7 @@ const Synth = () => {
 
   const handleDrag = (_: DraggableEvent, data: DraggableData) => {
     if (gainNode && oscillator) {
-      let amp = (2 * (data.y - minY)) / (maxY - minY) - 1;
+      let amp = (2 * (maxY - data.y)) / (maxY - minY) - 1;
 
       if (amp === 0) {
         amp = amp > 0 ? 0.0001 : -0.0001;
@@ -91,19 +93,8 @@ const Synth = () => {
   };
 
   return (
-    <div
-      className='synth'
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        position: 'absolute',
-        top: '50%',
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
-      }}
-    >
-      <div className='audio' style={{ marginBottom: '8rem' }}>
+    <div className='synth'>
+      <div className='audio'>
         <div className='drag'>
           <Draggable
             isPlaying={isPlaying}
@@ -113,8 +104,12 @@ const Synth = () => {
           />
         </div>
       </div>
-      <div className='visualiser'>
+      <div className='visualiser' style={{ marginTop: '2rem' }}>
         <Visualiser analyser={analyserNode} isPlaying={isPlaying} />
+        <p>Frequency: {frequency}</p>
+      </div>
+      <div className='controls'>
+        <WaveTypeSelector onTypeSelect={setWaveType} />
       </div>
     </div>
   );
