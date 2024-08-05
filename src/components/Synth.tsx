@@ -18,7 +18,7 @@ const Synth = () => {
   const [gainNode, setGainNode] = useState<GainNode | null>();
   const { audioContextInstance } = useSynthAudioContext();
   const [analyserNode, setAnalyserNode] = useState<AnalyserNode>();
-  const [frequency, setFrequency] = useState(440);
+  const [frequency, setFrequency] = useState(600);
   const [amplitude, setAmplitude] = useState(0);
   const [waveType, setWaveType] = useState<OscillatorType>('sine');
 
@@ -82,7 +82,7 @@ const Synth = () => {
         clampedAmp,
         audioContextInstance.currentTime,
       );
-      const freq = frequency + data.deltaX;
+      const freq = Math.max(frequency + data.deltaX, 0);
       oscillator.frequency.exponentialRampToValueAtTime(
         freq,
         audioContextInstance.currentTime + 0.1,
