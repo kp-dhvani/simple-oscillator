@@ -64,6 +64,6 @@
   },
   "main": "index.js",
   "repository": "https://github.com/Ashirogi-Muto/simple-synth.git",
-  "author": "Kshitij Pandey <kshitijpandey32@gmail.com>",
+  "author": "Kshitij Pandey",
   "license": "MIT"
 }
