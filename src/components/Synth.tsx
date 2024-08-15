@@ -8,6 +8,11 @@ import Draggable from './Draggable';
 import Visualiser from './Visualiser';
 import { useSynthAudioContext } from './SynthAudioContextProvider';
 import WaveTypeSelector from './TypeSelector';
+import CanvasShape from './Shape';
+import Shape from './Shape';
+import Triangle from './Shape/Triangle';
+import Square from './Shape/Square';
+import Sawtooth from './Shape/Sawtooth';
 
 const minY = -250;
 const maxY = 220;
@@ -94,7 +99,7 @@ const Synth = () => {
 
   return (
     <div className='synth'>
-      <div className='audio'>
+      {/* <div className='audio'>
         <div className='drag'>
           <Draggable
             isPlaying={isPlaying}
@@ -110,6 +115,15 @@ const Synth = () => {
       </div>
       <div className='controls'>
         <WaveTypeSelector onTypeSelect={setWaveType} />
+      </div> */}
+      <div className='controls'>
+        <WaveTypeSelector onTypeSelect={setWaveType} />
+      </div>
+      <div className='canvas-shape' style={{ background: '#fff' }}>
+        {/* <Shape waveType={waveType} /> */}
+        {/* <Triangle /> */}
+        {/* <Square /> */}
+        <Sawtooth />
       </div>
     </div>
   );
