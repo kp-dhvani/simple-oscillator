@@ -8,11 +8,7 @@ import Draggable from './Draggable';
 import Visualiser from './Visualiser';
 import { useSynthAudioContext } from './SynthAudioContextProvider';
 import WaveTypeSelector from './TypeSelector';
-import CanvasShape from './Shape';
-import Shape from './Shape';
-import Triangle from './Shape/Triangle';
-import Square from './Shape/Square';
-import Sawtooth from './Shape/Sawtooth';
+import InteractiveShape, { Shapes } from './Shape';
 
 const minY = -250;
 const maxY = 220;
@@ -23,9 +19,11 @@ const Synth = () => {
   const [gainNode, setGainNode] = useState<GainNode | null>();
   const { audioContextInstance } = useSynthAudioContext();
   const [analyserNode, setAnalyserNode] = useState<AnalyserNode>();
-  const [frequency, setFrequency] = useState(600);
+  const [frequency, setFrequency] = useState(440);
   const [amplitude, setAmplitude] = useState(0);
-  const [waveType, setWaveType] = useState<OscillatorType>('sine');
+  const [waveType, setWaveType] = useState<OscillatorType>(Shapes.Sawtooth);
+  const [isShapeLocked, setIsShapeLocked] = useState(false);
+  const [newShapeCoordinates, setNewShapeCoordinates] = useState(0);
 
   useEffect(() => {
     const analyser = audioContextInstance.createAnalyser();
@@ -120,10 +118,12 @@ const Synth = () => {
         <WaveTypeSelector onTypeSelect={setWaveType} />
       </div>
       <div className='canvas-shape' style={{ background: '#fff' }}>
-        {/* <Shape waveType={waveType} /> */}
-        {/* <Triangle /> */}
-        {/* <Square /> */}
-        <Sawtooth />
+        <InteractiveShape
+          waveType={waveType}
+          isLocked={isShapeLocked}
+          lockShape={setIsShapeLocked}
+          setNewShapeCoordinates={setNewShapeCoordinates}
+        />
       </div>
     </div>
   );

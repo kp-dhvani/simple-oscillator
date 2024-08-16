@@ -5,17 +5,18 @@ import {
   Stage,
   Layer,
   Circle,
-  Line,
   Rect,
-  Shape,
   RegularPolygon,
+  KonvaNodeComponent,
 } from 'react-konva';
+import Konva from 'konva';
 
 const InteractiveSawtooth: React.FC = () => {
-  const initialRadius = 140;
-  const [radius, setRadius] = useState({ x: initialRadius, y: initialRadius });
+  const initialHeight = 200;
+  const [height, setHeight] = useState(initialHeight);
   const [isLocked, setIsLocked] = useState(false);
   const initialMouseYRef = useRef<number | null>(null);
+  const mainBodyRef = useRef<Konva.Rect>(null);
 
   const handleShapeClick = (e: KonvaEventObject<MouseEvent>) => {
     if (isLocked) {
@@ -34,9 +35,11 @@ const InteractiveSawtooth: React.FC = () => {
     if (isLocked && initialMouseYRef.current !== null) {
       const currentMouseY = e.evt.clientY;
       const deltaY = initialMouseYRef.current - currentMouseY;
-      const newUpperRadiusY = Math.max(50, radius.y + deltaY);
-      setRadius({ x: radius.x, y: newUpperRadiusY });
-
+      const newHeight = Math.max(50, height + deltaY);
+      setHeight(newHeight);
+      if (mainBodyRef.current) {
+        mainBodyRef.current.y(mainBodyRef.current.y() - deltaY);
+      }
       // Update the initial mouse position for continuous dragging
       initialMouseYRef.current = currentMouseY;
     }
@@ -49,6 +52,7 @@ const InteractiveSawtooth: React.FC = () => {
       initialMouseYRef.current = null;
     }
   };
+
   return (
     <Stage
       width={800}
@@ -56,33 +60,44 @@ const InteractiveSawtooth: React.FC = () => {
       onMouseMove={handleMouseMove} // Update shape while dragging
       onMouseUp={handleMouseUp} // Release lock on mouse up
     >
-      <Layer offsetY={-250}>
+      <Layer offsetY={-300}>
+        {/* sawtooth */}
         <RegularPolygon
           x={140}
-          y={100}
+          y={200 - height + 100}
           sides={3}
           radius={40}
           rotation={-90}
           fill={'#00B6EE'}
         />
+        {/* sawtooth */}
         <RegularPolygon
           x={195}
-          y={100}
+          y={200 - height + 100}
           sides={3}
           radius={40}
           rotation={-90}
           fill={'#00B6EE'}
         />
+        {/* sawtooth */}
         <RegularPolygon
           x={250}
-          y={100}
+          y={200 - height + 100}
           sides={3}
           radius={40}
           rotation={-90}
           fill={'#00B6EE'}
         />
         {/* main body */}
-        <Rect x={100} y={100} width={170} height={200} fill={'#00B6EE'} />
+        <Rect
+          x={100}
+          y={100}
+          width={170}
+          height={height}
+          fill={'#00B6EE'}
+          onClick={handleShapeClick}
+          ref={mainBodyRef}
+        />
         <Circle x={150} y={190} fill={'#fff'} radius={20} />
         <Circle x={220} y={190} fill={'#fff'} radius={20} />
         {/* <Arc

@@ -12,8 +12,9 @@ import {
 } from 'react-konva';
 
 const InteractiveTriangle: React.FC = () => {
-  const initialRadius = 140;
-  const [radius, setRadius] = useState({ x: initialRadius, y: initialRadius });
+  const initialHeight = 170;
+  const [height, setHeight] = useState(initialHeight);
+  const [topY, setTopY] = useState(100); // Top point of the triangle
   const [isLocked, setIsLocked] = useState(false);
   const initialMouseYRef = useRef<number | null>(null);
 
@@ -29,18 +30,21 @@ const InteractiveTriangle: React.FC = () => {
     }
   };
 
-  // Handle mouse move event on the shape
-  const handleMouseMove = (e: KonvaEventObject<MouseEvent>) => {
+  const handleMouseMove = (e: any) => {
     if (isLocked && initialMouseYRef.current !== null) {
       const currentMouseY = e.evt.clientY;
       const deltaY = initialMouseYRef.current - currentMouseY;
-      const newUpperRadiusY = Math.max(50, radius.y + deltaY);
-      setRadius({ x: radius.x, y: newUpperRadiusY });
+      const newTopY = topY - deltaY;
 
-      // Update the initial mouse position for continuous dragging
+      setTopY(newTopY);
+
       initialMouseYRef.current = currentMouseY;
     }
   };
+
+  // useEffect(() => {
+  //   console.log({ isLocked });
+  // }, [isLocked]);
 
   // Handle mouse up event to release the lock
   const handleMouseUp = () => {
@@ -49,10 +53,7 @@ const InteractiveTriangle: React.FC = () => {
       initialMouseYRef.current = null;
     }
   };
-  const width = 800;
-  const height = 800;
-  //   const radius = 200;
-  const cornerRadius = 30;
+
   return (
     <Stage
       width={800}
@@ -60,16 +61,29 @@ const InteractiveTriangle: React.FC = () => {
       onMouseMove={handleMouseMove} // Update shape while dragging
       onMouseUp={handleMouseUp} // Release lock on mouse up
     >
-      <Layer offsetY={-250}>
-        <RegularPolygon
+      <Layer offsetY={-150}>
+        {/* <RegularPolygon
           x={200}
-          y={200}
+          y={370 - height}
           sides={3}
           radius={170}
           fill={'#00B6EE'}
+          onClick={handleShapeClick}
+        /> */}
+        <Shape
+          sceneFunc={(context, shape) => {
+            context.beginPath();
+            context.moveTo(180, topY); // Top vertex
+            context.lineTo(30, 300); // Bottom left vertex
+            context.lineTo(330, 300); // Bottom right vertex
+            context.closePath();
+            context.fillStrokeShape(shape);
+          }}
+          fill='#00B6EE'
+          onClick={handleShapeClick}
         />
-        <Circle x={170} y={190} fill={'#fff'} radius={20} />
-        <Circle x={230} y={190} fill={'#fff'} radius={20} />
+        <Circle x={150} y={220} fill={'#fff'} radius={15} />
+        <Circle x={210} y={220} fill={'#fff'} radius={15} />
         {/* <Arc
           x={200}
           y={210}
@@ -79,8 +93,8 @@ const InteractiveTriangle: React.FC = () => {
           fill={'#fff'}
         /> */}
         <Rect
-          x={190}
-          y={250}
+          x={170}
+          y={270}
           width={20}
           height={10}
           cornerRadius={50}
@@ -94,7 +108,7 @@ const InteractiveTriangle: React.FC = () => {
           cornerRadius={50}
           fill={'#00B6EE'}
           offsetX={40}
-          rotation={30}
+          rotation={40}
         />
         <Rect
           x={350}
@@ -103,16 +117,15 @@ const InteractiveTriangle: React.FC = () => {
           height={60}
           cornerRadius={50}
           fill={'#00B6EE'}
-          offsetX={73}
-          offsetY={-27}
-          rotation={-30}
+          offsetX={110}
+          rotation={-40}
         />
         {/* left leg */}
         <Rect
-          x={150}
+          x={120}
           y={260}
           width={35}
-          height={60}
+          height={80}
           cornerRadius={50}
           fill={'#00B6EE'}
         />
@@ -121,7 +134,7 @@ const InteractiveTriangle: React.FC = () => {
           x={210}
           y={260}
           width={35}
-          height={60}
+          height={80}
           cornerRadius={50}
           fill={'#00B6EE'}
         />
