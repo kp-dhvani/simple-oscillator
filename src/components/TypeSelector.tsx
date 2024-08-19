@@ -17,7 +17,7 @@ const TypeSelector: React.FC<TypeSelectorProps> = ({
       style={styles.container as React.CSSProperties}
     >
       <label htmlFor='waveform-type' style={styles.label}>
-        Oscillator Type
+        Oscillator
       </label>
       <select
         id='waveform-type'

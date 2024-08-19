@@ -21,6 +21,7 @@ const InteractiveSine: React.FC<InteractiveSineProps> = ({
     if (isLocked) {
       lockShape(false);
       initialMouseYRef.current = null;
+      setRadius({ x: initialRadius, y: initialRadius });
     } else {
       lockShape(true);
       initialMouseYRef.current = e.evt.clientY;
@@ -32,7 +33,7 @@ const InteractiveSine: React.FC<InteractiveSineProps> = ({
     if (isLocked && initialMouseYRef.current !== null) {
       const currentMouseY = e.evt.clientY;
       const deltaY = initialMouseYRef.current - currentMouseY;
-      const newUpperRadiusY = Math.max(50, radius.y + deltaY);
+      const newUpperRadiusY = Math.max(80, radius.y + deltaY);
       setShapeDimensionChangeDelta(newUpperRadiusY - initialRadius);
       setRadius({ x: radius.x, y: newUpperRadiusY });
 
@@ -50,8 +51,8 @@ const InteractiveSine: React.FC<InteractiveSineProps> = ({
   };
   return (
     <Stage
-      width={800}
-      height={800}
+      width={500}
+      height={550}
       onMouseMove={handleMouseMove} // Update shape while dragging
       onMouseUp={handleMouseUp} // Release lock on mouse up
     >
@@ -91,7 +92,7 @@ const InteractiveSine: React.FC<InteractiveSineProps> = ({
             context.closePath();
             context.fillStrokeShape(shape);
           }}
-          fill={'#00B6EE'}
+          fill={'#FF6577'}
           onClick={handleShapeClick} // Toggle locking the shape on click
         />
         <Circle x={170} y={170} fill={'#fff'} radius={20} />
@@ -122,7 +123,7 @@ const InteractiveSine: React.FC<InteractiveSineProps> = ({
           width={35}
           height={60}
           cornerRadius={50}
-          fill={'#00B6EE'}
+          fill={'#FF6577'}
           rotation={isLocked ? 60 : 0}
         />
         {/* right arm */}
@@ -132,7 +133,7 @@ const InteractiveSine: React.FC<InteractiveSineProps> = ({
           width={35}
           height={60}
           cornerRadius={50}
-          fill={'#00B6EE'}
+          fill={'#FF6577'}
           rotation={isLocked ? -60 : 0}
         />
         {/* left leg */}
@@ -140,9 +141,9 @@ const InteractiveSine: React.FC<InteractiveSineProps> = ({
           x={150}
           y={310}
           width={35}
-          height={70}
+          height={60}
           cornerRadius={50}
-          fill={'#00B6EE'}
+          fill={'#FF6577'}
           offsetY={-10}
         />
         {/* right leg */}
@@ -150,9 +151,9 @@ const InteractiveSine: React.FC<InteractiveSineProps> = ({
           x={210}
           y={310}
           width={35}
-          height={70}
+          height={60}
           cornerRadius={50}
-          fill={'#00B6EE'}
+          fill={'#FF6577'}
           offsetY={-10}
         />
       </Layer>

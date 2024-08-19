@@ -10,13 +10,12 @@ import { useSynthAudioContext } from './SynthAudioContextProvider';
 import WaveTypeSelector from './TypeSelector';
 import InteractiveShape, { Shapes } from './Shape';
 
-const minY = -250;
-const maxY = 220;
-
 const Synth = () => {
   const [isPlaying, setIsPlaying] = useState(false);
+  const [isShapeOscillatorPlaying, setIsShapeOscillatorPlaying] =
+    useState(false);
   const [oscillator, setOscillator] = useState<OscillatorNode | null>();
-  const [oscillatorNode, setOscillatorNode] = useState<OscillatorNode | null>(
+  const [shapeOscillator, setShapeOscillator] = useState<OscillatorNode | null>(
     null,
   );
   const [gainNode, setGainNode] = useState<GainNode | null>();
@@ -33,7 +32,7 @@ const Synth = () => {
     analyser.fftSize = 2048;
     setAnalyserNode(analyser);
     return () => {
-      setOscillatorNode(null);
+      setShapeOscillator(null);
       setAnalyserNode(null);
     };
   }, []);
@@ -53,55 +52,45 @@ const Synth = () => {
   }, [isShapeLocked]);
 
   const changeSound = () => {
-    if (oscillatorNode) {
-      const freq = Math.max(50, frequency + shapeDimensionChangeDelta);
-      oscillatorNode.frequency.exponentialRampToValueAtTime(
-        freq,
+    if (shapeOscillator) {
+      const minFreq = 20;
+      const maxFreq = 20000;
+
+      const newFreq = frequency + shapeDimensionChangeDelta;
+
+      const clampedFreq = Math.max(minFreq, Math.min(maxFreq, newFreq));
+      shapeOscillator.frequency.exponentialRampToValueAtTime(
+        clampedFreq,
         audioContextInstance.currentTime + 0.1,
       );
-      console.log({ freq, shapeDimensionChangeDelta });
-      setFrequency(freq);
+      setFrequency(clampedFreq);
     }
   };
 
   const startOscillator = () => {
-    console.log('in');
-    const oscillator = audioContextInstance.createOscillator();
-    oscillator.type = waveType;
-    oscillator.frequency.exponentialRampToValueAtTime(
+    const osc = audioContextInstance.createOscillator();
+    osc.type = waveType;
+    osc.connect(analyserNode!);
+    analyserNode?.connect(audioContextInstance.destination);
+    osc.frequency.exponentialRampToValueAtTime(
       frequency,
       audioContextInstance.currentTime + 0.1,
     );
-    oscillator.connect(audioContextInstance.destination);
-    oscillator.start();
-    setIsPlaying(true);
-    setOscillatorNode(oscillator);
+    // Create a looping envelope for the gain
+    osc.connect(audioContextInstance.destination);
+    osc.start();
+    setIsShapeOscillatorPlaying(true);
+    setShapeOscillator(osc);
   };
 
   const stopOscillator = () => {
-    if (oscillatorNode) {
-      if (isPlaying) {
-        console.log('stop');
-        oscillatorNode.stop();
-        oscillatorNode.disconnect();
-        setIsPlaying(false);
-        setOscillatorNode(null);
-      }
-    }
-  };
-
-  const handleShapeClick = (isLocked: boolean) => {
-    setIsShapeLocked((prevIsLocked) => !prevIsLocked);
-    console.log({ isLocked });
-    if (isShapeLocked) {
-      console.log('shape is locked');
-    } else {
-      console.log('else');
-      if (isPlaying) {
-        console.log('stop');
-        oscillatorNode?.disconnect();
-        oscillatorNode?.stop();
-        setIsPlaying(false);
+    if (shapeOscillator) {
+      if (isShapeOscillatorPlaying) {
+        shapeOscillator.stop();
+        shapeOscillator.disconnect();
+        setIsShapeOscillatorPlaying(false);
+        setShapeOscillator(null);
+        setFrequency(440);
       }
     }
   };
@@ -149,6 +138,8 @@ const Synth = () => {
   };
 
   const handleDrag = (_: DraggableEvent, data: DraggableData) => {
+    const minY = -250;
+    const maxY = 220;
     if (gainNode && oscillator) {
       let amp = (2 * (maxY - data.y)) / (maxY - minY) - 1;
 
@@ -172,7 +163,7 @@ const Synth = () => {
 
   return (
     <div className='synth'>
-      {/* <div className='audio'>
+      <div className='audio' style={{ zIndex: -1 }}>
         <div className='drag'>
           <Draggable
             isPlaying={isPlaying}
@@ -182,20 +173,29 @@ const Synth = () => {
           />
         </div>
       </div>
-      <div className='visualiser' style={{ marginTop: '2rem' }}>
-        <Visualiser analyser={analyserNode} isPlaying={isPlaying} />
+      <div className='visualiser' style={{ marginTop: '2rem', zIndex: -1 }}>
+        <Visualiser
+          analyser={analyserNode}
+          isPlaying={isPlaying || isShapeOscillatorPlaying}
+        />
         <p>Frequency: {frequency}</p>
       </div>
       <div className='controls'>
-        <WaveTypeSelector onTypeSelect={setWaveType} />
-      </div> */}
-      <div className='controls'>
         <WaveTypeSelector waveType={waveType} onTypeSelect={setWaveType} />
       </div>
-      <div className='canvas-shape' style={{ background: '#fff' }}>
+      <div
+        className='canvas-shape'
+        style={{
+          background: '#fff',
+          zIndex: 1,
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+      >
         <InteractiveShape
           waveType={waveType}
-          isLocked={isShapeLocked}
+          isLocked={isShapeLocked || isPlaying}
           lockShape={setIsShapeLocked}
           setShapeDimensionChangeDelta={setShapeDimensionChangeDelta}
         />
