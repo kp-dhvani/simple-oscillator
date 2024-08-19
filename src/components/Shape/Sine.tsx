@@ -5,13 +5,13 @@ import { Arc, Stage, Layer, Circle, Rect, Shape } from 'react-konva';
 interface InteractiveSineProps {
   isLocked: boolean;
   lockShape: React.Dispatch<React.SetStateAction<boolean>>;
-  setNewShapeCoordinates: React.Dispatch<React.SetStateAction<number>>;
+  setShapeDimensionChangeDelta: React.Dispatch<React.SetStateAction<number>>;
 }
 
 const InteractiveSine: React.FC<InteractiveSineProps> = ({
   isLocked,
   lockShape,
-  setNewShapeCoordinates,
+  setShapeDimensionChangeDelta,
 }) => {
   const initialRadius = 140;
   const [radius, setRadius] = useState({ x: initialRadius, y: initialRadius });
@@ -33,16 +33,13 @@ const InteractiveSine: React.FC<InteractiveSineProps> = ({
       const currentMouseY = e.evt.clientY;
       const deltaY = initialMouseYRef.current - currentMouseY;
       const newUpperRadiusY = Math.max(50, radius.y + deltaY);
+      setShapeDimensionChangeDelta(newUpperRadiusY - initialRadius);
       setRadius({ x: radius.x, y: newUpperRadiusY });
 
       // Update the initial mouse position for continuous dragging
       initialMouseYRef.current = currentMouseY;
     }
   };
-
-  useEffect(() => {
-    setNewShapeCoordinates(radius.y);
-  }, [radius]);
 
   // Handle mouse up event to release the lock
   const handleMouseUp = () => {
@@ -61,7 +58,7 @@ const InteractiveSine: React.FC<InteractiveSineProps> = ({
       <Layer offsetY={-150}>
         <Shape
           sceneFunc={(context, shape) => {
-            const radiusX = 140;
+            const radiusX = initialRadius;
             const centerX = 200;
             const centerY = 200;
 
@@ -102,59 +99,61 @@ const InteractiveSine: React.FC<InteractiveSineProps> = ({
         {isLocked ? (
           <Arc
             x={200}
-            y={260}
+            y={230}
             angle={180}
             innerRadius={0}
-            outerRadius={50}
+            outerRadius={90}
             fill={'#fff'}
           />
         ) : (
           <Rect
             x={190}
-            y={260}
+            y={230}
             width={20}
             height={10}
             cornerRadius={50}
             fill={'#fff'}
           />
         )}
+        {/* left arm */}
         <Rect
-          x={100}
+          x={isLocked ? 45 : 25}
           y={200}
           width={35}
           height={60}
           cornerRadius={50}
           fill={'#00B6EE'}
-          offsetX={75}
+          rotation={isLocked ? 60 : 0}
         />
+        {/* right arm */}
         <Rect
-          x={420}
-          y={200}
+          x={340}
+          y={isLocked ? 230 : 200}
           width={35}
           height={60}
           cornerRadius={50}
           fill={'#00B6EE'}
-          offsetX={75}
+          rotation={isLocked ? -60 : 0}
         />
         {/* left leg */}
         <Rect
           x={150}
-          y={300}
+          y={310}
           width={35}
-          height={60}
+          height={70}
           cornerRadius={50}
           fill={'#00B6EE'}
-          offsetY={-20}
+          offsetY={-10}
         />
         {/* right leg */}
         <Rect
           x={210}
-          y={300}
+          y={310}
           width={35}
-          height={60}
+          height={70}
           cornerRadius={50}
           fill={'#00B6EE'}
-          offsetY={-20}
+          offsetY={-10}
         />
       </Layer>
     </Stage>

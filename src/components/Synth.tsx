@@ -16,20 +16,95 @@ const maxY = 220;
 const Synth = () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [oscillator, setOscillator] = useState<OscillatorNode | null>();
+  const [oscillatorNode, setOscillatorNode] = useState<OscillatorNode | null>(
+    null,
+  );
   const [gainNode, setGainNode] = useState<GainNode | null>();
   const { audioContextInstance } = useSynthAudioContext();
-  const [analyserNode, setAnalyserNode] = useState<AnalyserNode>();
+  const [analyserNode, setAnalyserNode] = useState<AnalyserNode | null>(null);
   const [frequency, setFrequency] = useState(440);
   const [amplitude, setAmplitude] = useState(0);
-  const [waveType, setWaveType] = useState<OscillatorType>(Shapes.Sawtooth);
+  const [waveType, setWaveType] = useState<OscillatorType>(Shapes.Sine);
   const [isShapeLocked, setIsShapeLocked] = useState(false);
-  const [newShapeCoordinates, setNewShapeCoordinates] = useState(0);
+  const [shapeDimensionChangeDelta, setShapeDimensionChangeDelta] = useState(0);
 
   useEffect(() => {
     const analyser = audioContextInstance.createAnalyser();
     analyser.fftSize = 2048;
     setAnalyserNode(analyser);
+    return () => {
+      setOscillatorNode(null);
+      setAnalyserNode(null);
+    };
   }, []);
+
+  useEffect(() => {
+    if (isShapeLocked) {
+      changeSound();
+    }
+  }, [shapeDimensionChangeDelta]);
+
+  useEffect(() => {
+    if (isShapeLocked) {
+      startOscillator();
+    } else {
+      stopOscillator();
+    }
+  }, [isShapeLocked]);
+
+  const changeSound = () => {
+    if (oscillatorNode) {
+      const freq = Math.max(50, frequency + shapeDimensionChangeDelta);
+      oscillatorNode.frequency.exponentialRampToValueAtTime(
+        freq,
+        audioContextInstance.currentTime + 0.1,
+      );
+      console.log({ freq, shapeDimensionChangeDelta });
+      setFrequency(freq);
+    }
+  };
+
+  const startOscillator = () => {
+    console.log('in');
+    const oscillator = audioContextInstance.createOscillator();
+    oscillator.type = waveType;
+    oscillator.frequency.exponentialRampToValueAtTime(
+      frequency,
+      audioContextInstance.currentTime + 0.1,
+    );
+    oscillator.connect(audioContextInstance.destination);
+    oscillator.start();
+    setIsPlaying(true);
+    setOscillatorNode(oscillator);
+  };
+
+  const stopOscillator = () => {
+    if (oscillatorNode) {
+      if (isPlaying) {
+        console.log('stop');
+        oscillatorNode.stop();
+        oscillatorNode.disconnect();
+        setIsPlaying(false);
+        setOscillatorNode(null);
+      }
+    }
+  };
+
+  const handleShapeClick = (isLocked: boolean) => {
+    setIsShapeLocked((prevIsLocked) => !prevIsLocked);
+    console.log({ isLocked });
+    if (isShapeLocked) {
+      console.log('shape is locked');
+    } else {
+      console.log('else');
+      if (isPlaying) {
+        console.log('stop');
+        oscillatorNode?.disconnect();
+        oscillatorNode?.stop();
+        setIsPlaying(false);
+      }
+    }
+  };
 
   const onDragStart: DraggableEventHandler = () => {
     setIsPlaying(true);
@@ -115,14 +190,14 @@ const Synth = () => {
         <WaveTypeSelector onTypeSelect={setWaveType} />
       </div> */}
       <div className='controls'>
-        <WaveTypeSelector onTypeSelect={setWaveType} />
+        <WaveTypeSelector waveType={waveType} onTypeSelect={setWaveType} />
       </div>
       <div className='canvas-shape' style={{ background: '#fff' }}>
         <InteractiveShape
           waveType={waveType}
           isLocked={isShapeLocked}
           lockShape={setIsShapeLocked}
-          setNewShapeCoordinates={setNewShapeCoordinates}
+          setShapeDimensionChangeDelta={setShapeDimensionChangeDelta}
         />
       </div>
     </div>

@@ -1,15 +1,6 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { KonvaEventObject } from 'konva/lib/Node';
-import {
-  Arc,
-  Stage,
-  Layer,
-  Circle,
-  Line,
-  Rect,
-  Shape,
-  RegularPolygon,
-} from 'react-konva';
+import { Stage, Layer, Circle, Rect } from 'react-konva';
 import Konva from 'konva';
 
 const InteractiveSquare: React.FC = () => {

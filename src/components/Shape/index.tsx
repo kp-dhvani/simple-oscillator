@@ -15,19 +15,19 @@ interface InteractiveShapeProps {
   waveType: string;
   isLocked: boolean;
   lockShape: React.Dispatch<React.SetStateAction<boolean>>;
-  setNewShapeCoordinates: React.Dispatch<React.SetStateAction<number>>;
+  setShapeDimensionChangeDelta: React.Dispatch<React.SetStateAction<number>>;
 }
 
 const InteractiveShape: React.FC<InteractiveShapeProps> = ({
   waveType,
   isLocked,
   lockShape,
-  setNewShapeCoordinates,
+  setShapeDimensionChangeDelta,
 }) => {
   const props = {
     isLocked,
     lockShape,
-    setNewShapeCoordinates,
+    setShapeDimensionChangeDelta,
   };
   const renderWave = () => {
     switch (waveType) {

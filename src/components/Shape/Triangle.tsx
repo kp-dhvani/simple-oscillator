@@ -12,15 +12,12 @@ import {
 } from 'react-konva';
 
 const InteractiveTriangle: React.FC = () => {
-  const initialHeight = 170;
-  const [height, setHeight] = useState(initialHeight);
-  const [topY, setTopY] = useState(100); // Top point of the triangle
+  const [topY, setTopY] = useState(100);
   const [isLocked, setIsLocked] = useState(false);
   const initialMouseYRef = useRef<number | null>(null);
 
   const handleShapeClick = (e: KonvaEventObject<MouseEvent>) => {
     if (isLocked) {
-      // If already locked, release the lock on click
       setIsLocked(false);
       initialMouseYRef.current = null;
     } else {
@@ -41,10 +38,6 @@ const InteractiveTriangle: React.FC = () => {
       initialMouseYRef.current = currentMouseY;
     }
   };
-
-  // useEffect(() => {
-  //   console.log({ isLocked });
-  // }, [isLocked]);
 
   // Handle mouse up event to release the lock
   const handleMouseUp = () => {

@@ -1,9 +1,13 @@
 import React, { Dispatch, SetStateAction } from 'react';
 interface TypeSelectorProps {
+  waveType: string;
   onTypeSelect: Dispatch<SetStateAction<OscillatorType>>;
 }
 
-const TypeSelector: React.FC<TypeSelectorProps> = ({ onTypeSelect }) => {
+const TypeSelector: React.FC<TypeSelectorProps> = ({
+  waveType,
+  onTypeSelect,
+}) => {
   const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     onTypeSelect(event.target.value as OscillatorType);
   };
@@ -18,6 +22,7 @@ const TypeSelector: React.FC<TypeSelectorProps> = ({ onTypeSelect }) => {
       <select
         id='waveform-type'
         style={styles.select as React.CSSProperties}
+        value={waveType}
         onChange={handleChange}
       >
         <option value='sine'>Sine</option>
