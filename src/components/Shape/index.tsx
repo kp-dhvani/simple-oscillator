@@ -32,7 +32,7 @@ const InteractiveShape: React.FC<InteractiveShapeProps> = ({
   const renderWave = () => {
     switch (waveType) {
       case Shapes.Sawtooth:
-        return <Sawtooth />;
+        return <Sawtooth {...props} />;
       case Shapes.Sine:
         return <Sine {...props} />;
       case Shapes.Square:
@@ -43,7 +43,20 @@ const InteractiveShape: React.FC<InteractiveShapeProps> = ({
         return <p>Not a supported wave type</p>;
     }
   };
-  return <div className='interactive-shape'>{renderWave()}</div>;
+  return (
+    <div
+      className='interactive-shape'
+      style={{
+        background: '#fff',
+        zIndex: 1,
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+      }}
+    >
+      {renderWave()}
+    </div>
+  );
 };
 
 export default InteractiveShape;

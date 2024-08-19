@@ -11,22 +11,33 @@ import {
 } from 'react-konva';
 import Konva from 'konva';
 
-const InteractiveSawtooth: React.FC = () => {
+interface InteractiveSawtoothProps {
+  isLocked: boolean;
+  lockShape: React.Dispatch<React.SetStateAction<boolean>>;
+  setShapeDimensionChangeDelta: React.Dispatch<React.SetStateAction<number>>;
+}
+
+const InteractiveSawtooth: React.FC<InteractiveSawtoothProps> = ({
+  isLocked,
+  lockShape,
+  setShapeDimensionChangeDelta,
+}) => {
   const initialHeight = 200;
   const [height, setHeight] = useState(initialHeight);
-  const [isLocked, setIsLocked] = useState(false);
   const initialMouseYRef = useRef<number | null>(null);
   const mainBodyRef = useRef<Konva.Rect>(null);
 
   const handleShapeClick = (e: KonvaEventObject<MouseEvent>) => {
     if (isLocked) {
-      // If already locked, release the lock on click
-      setIsLocked(false);
+      lockShape(false);
       initialMouseYRef.current = null;
+      setHeight(initialHeight);
+      if (mainBodyRef.current) {
+        mainBodyRef.current.y(100);
+      }
     } else {
-      // Lock the shape and start tracking the mouse position
-      setIsLocked(true);
-      initialMouseYRef.current = e.evt.clientY; // Capture initial mouse position
+      lockShape(true);
+      initialMouseYRef.current = e.evt.clientY;
     }
   };
 
@@ -35,9 +46,10 @@ const InteractiveSawtooth: React.FC = () => {
     if (isLocked && initialMouseYRef.current !== null) {
       const currentMouseY = e.evt.clientY;
       const deltaY = initialMouseYRef.current - currentMouseY;
-      const newHeight = Math.max(50, height + deltaY);
+      const newHeight = Math.max(130, Math.min(390, height + deltaY));
+      setShapeDimensionChangeDelta(newHeight - initialHeight);
       setHeight(newHeight);
-      if (mainBodyRef.current) {
+      if (newHeight > 130 && newHeight < 390 && mainBodyRef.current) {
         mainBodyRef.current.y(mainBodyRef.current.y() - deltaY);
       }
       // Update the initial mouse position for continuous dragging
@@ -48,7 +60,7 @@ const InteractiveSawtooth: React.FC = () => {
   // Handle mouse up event to release the lock
   const handleMouseUp = () => {
     if (isLocked) {
-      setIsLocked(false);
+      lockShape(false);
       initialMouseYRef.current = null;
     }
   };
@@ -68,7 +80,7 @@ const InteractiveSawtooth: React.FC = () => {
           sides={3}
           radius={40}
           rotation={-90}
-          fill={'#00B6EE'}
+          fill={'#FF6577'}
         />
         {/* sawtooth */}
         <RegularPolygon
@@ -77,7 +89,7 @@ const InteractiveSawtooth: React.FC = () => {
           sides={3}
           radius={40}
           rotation={-90}
-          fill={'#00B6EE'}
+          fill={'#FF6577'}
         />
         {/* sawtooth */}
         <RegularPolygon
@@ -86,7 +98,7 @@ const InteractiveSawtooth: React.FC = () => {
           sides={3}
           radius={40}
           rotation={-90}
-          fill={'#00B6EE'}
+          fill={'#FF6577'}
         />
         {/* main body */}
         <Rect
@@ -94,47 +106,51 @@ const InteractiveSawtooth: React.FC = () => {
           y={100}
           width={170}
           height={height}
-          fill={'#00B6EE'}
+          fill={'#FF6577'}
           onClick={handleShapeClick}
           ref={mainBodyRef}
         />
         <Circle x={150} y={190} fill={'#fff'} radius={20} />
         <Circle x={220} y={190} fill={'#fff'} radius={20} />
-        {/* <Arc
-          x={200}
-          y={210}
-          angle={180}
-          innerRadius={0}
-          outerRadius={50}
-          fill={'#fff'}
-        /> */}
-        {/* face */}
-        <Rect
-          x={175}
-          y={250}
-          width={20}
-          height={10}
-          cornerRadius={50}
-          fill={'#fff'}
-        />
+        {isLocked ? (
+          <Arc
+            x={185}
+            y={220}
+            angle={180}
+            innerRadius={0}
+            outerRadius={60}
+            fill={'#fff'}
+          />
+        ) : (
+          <Rect
+            x={175}
+            y={220}
+            width={20}
+            height={10}
+            cornerRadius={50}
+            fill={'#fff'}
+          />
+        )}
+
         {/* left arm */}
         <Rect
-          x={100}
+          x={isLocked ? 80 : 60}
           y={200}
           width={35}
           height={60}
           cornerRadius={50}
-          fill={'#00B6EE'}
-          offsetX={40}
+          fill={'#FF6577'}
+          rotation={isLocked ? 60 : 0}
         />
         {/* right arm */}
         <Rect
-          x={275}
-          y={195}
+          x={isLocked ? 270 : 275}
+          y={isLocked ? 230 : 200}
           width={35}
           height={60}
           cornerRadius={50}
-          fill={'#00B6EE'}
+          fill={'#FF6577'}
+          rotation={isLocked ? -60 : 0}
         />
         {/* left leg */}
         <Rect
@@ -143,7 +159,7 @@ const InteractiveSawtooth: React.FC = () => {
           width={35}
           height={60}
           cornerRadius={50}
-          fill={'#00B6EE'}
+          fill={'#FF6577'}
         />
         {/* right leg */}
         <Rect
@@ -152,7 +168,7 @@ const InteractiveSawtooth: React.FC = () => {
           width={35}
           height={60}
           cornerRadius={50}
-          fill={'#00B6EE'}
+          fill={'#FF6577'}
         />
       </Layer>
     </Stage>

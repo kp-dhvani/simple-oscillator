@@ -183,16 +183,7 @@ const Synth = () => {
       <div className='controls'>
         <WaveTypeSelector waveType={waveType} onTypeSelect={setWaveType} />
       </div>
-      <div
-        className='canvas-shape'
-        style={{
-          background: '#fff',
-          zIndex: 1,
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}
-      >
+      <div className='canvas-shape'>
         <InteractiveShape
           waveType={waveType}
           isLocked={isShapeLocked || isPlaying}
