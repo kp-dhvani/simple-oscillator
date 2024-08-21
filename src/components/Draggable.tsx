@@ -24,14 +24,7 @@ const DraggableComponent: React.FC<DraggableComponentProps> = ({
     handleDrag(_, data);
   };
   return (
-    <div
-      className='drag-box'
-      style={{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-      }}
-    >
+    <div className='drag-box'>
       <div
         style={{
           border: `10px solid ${isPlaying ? '#FF6577' : '#b3b3b3'}`,

@@ -16,6 +16,22 @@ const InteractiveSine: React.FC<InteractiveSineProps> = ({
   const initialRadius = 140;
   const [radius, setRadius] = useState({ x: initialRadius, y: initialRadius });
   const initialMouseYRef = useRef<number | null>(null);
+  const [dimensions, setDimensions] = useState({
+    width: window.innerWidth * 0.8,
+    height: window.innerWidth * 0.8 * (550 / 500),
+  });
+
+  useEffect(() => {
+    const handleResize = () => {
+      setDimensions({
+        width: window.innerWidth * 0.8,
+        height: window.innerWidth * 0.8 * (550 / 500),
+      });
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const handleShapeClick = (e: KonvaEventObject<MouseEvent>) => {
     if (isLocked) {
@@ -51,12 +67,13 @@ const InteractiveSine: React.FC<InteractiveSineProps> = ({
   };
   return (
     <Stage
-      width={500}
-      height={550}
+      width={400}
+      height={520}
       onMouseMove={handleMouseMove} // Update shape while dragging
       onMouseUp={handleMouseUp} // Release lock on mouse up
+      offsetY={-120}
     >
-      <Layer offsetY={-150}>
+      <Layer>
         <Shape
           sceneFunc={(context, shape) => {
             const radiusX = initialRadius;

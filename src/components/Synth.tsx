@@ -8,10 +8,12 @@ import Draggable from './Draggable';
 import Visualiser from './Visualiser';
 import { useSynthAudioContext } from './SynthAudioContextProvider';
 import WaveTypeSelector from './TypeSelector';
-import InteractiveShape, { Shapes } from './Shape';
+import InteractiveShape, { Shapes } from './InteractiveShape';
+import NonInteractiveShape from './NonInteractiveShape';
+import './Synth.css';
 
 const Synth = () => {
-  const [isPlaying, setIsPlaying] = useState(false);
+  const [isDragPlaying, setIDragPlaying] = useState(false);
   const [isShapeOscillatorPlaying, setIsShapeOscillatorPlaying] =
     useState(false);
   const [oscillator, setOscillator] = useState<OscillatorNode | null>();
@@ -26,6 +28,7 @@ const Synth = () => {
   const [waveType, setWaveType] = useState<OscillatorType>(Shapes.Sine);
   const [isShapeLocked, setIsShapeLocked] = useState(false);
   const [shapeDimensionChangeDelta, setShapeDimensionChangeDelta] = useState(0);
+  const [showNonInteractiveShape, setShowNonInteractiveShape] = useState(false);
 
   useEffect(() => {
     const analyser = audioContextInstance.createAnalyser();
@@ -96,7 +99,7 @@ const Synth = () => {
   };
 
   const onDragStart: DraggableEventHandler = () => {
-    setIsPlaying(true);
+    setIDragPlaying(true);
     const oscillator = audioContextInstance.createOscillator();
     const newGainNode = audioContextInstance.createGain();
     oscillator.type = waveType;
@@ -127,7 +130,7 @@ const Synth = () => {
         0.0001,
         audioContextInstance.currentTime + 0.03,
       );
-      setIsPlaying(false);
+      setIDragPlaying(false);
       gainNode.disconnect(analyserNode!);
       analyserNode?.disconnect(audioContextInstance.destination);
       oscillator.stop();
@@ -161,35 +164,45 @@ const Synth = () => {
     }
   };
 
+  const handleNonInteractiveShapeClick = () => {
+    setShowNonInteractiveShape((prev) => !prev);
+  };
   return (
     <div className='synth'>
-      <div className='audio' style={{ zIndex: -1 }}>
+      {!showNonInteractiveShape ? (
         <div className='drag'>
           <Draggable
-            isPlaying={isPlaying}
+            isPlaying={isDragPlaying}
             onDragStart={onDragStart}
             onDragStop={onDragStop}
             handleDrag={handleDrag}
           />
+          <NonInteractiveShape onClick={handleNonInteractiveShapeClick} />
         </div>
-      </div>
+      ) : (
+        <>
+          <div className='canvas-shape'>
+            <InteractiveShape
+              waveType={waveType}
+              isLocked={isShapeLocked}
+              lockShape={setIsShapeLocked}
+              setShapeDimensionChangeDelta={setShapeDimensionChangeDelta}
+            />
+          </div>
+          <div>
+            <h4>back to drag synth</h4>
+          </div>
+        </>
+      )}
       <div className='visualiser' style={{ marginTop: '2rem', zIndex: -1 }}>
         <Visualiser
           analyser={analyserNode}
-          isPlaying={isPlaying || isShapeOscillatorPlaying}
+          isPlaying={isShapeOscillatorPlaying || isDragPlaying}
         />
         <p>Frequency: {frequency}</p>
       </div>
       <div className='controls'>
         <WaveTypeSelector waveType={waveType} onTypeSelect={setWaveType} />
-      </div>
-      <div className='canvas-shape'>
-        <InteractiveShape
-          waveType={waveType}
-          isLocked={isShapeLocked || isPlaying}
-          lockShape={setIsShapeLocked}
-          setShapeDimensionChangeDelta={setShapeDimensionChangeDelta}
-        />
       </div>
     </div>
   );

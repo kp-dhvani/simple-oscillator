@@ -47,11 +47,15 @@ const InteractiveShape: React.FC<InteractiveShapeProps> = ({
     <div
       className='interactive-shape'
       style={{
-        background: '#fff',
         zIndex: 1,
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
+        width: '100%',
+        maxWidth: '600px',
+        margin: '0 auto',
+        padding: '1rem',
+        boxSizing: 'border-box',
       }}
     >
       {renderWave()}
