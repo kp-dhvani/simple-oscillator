@@ -30,6 +30,51 @@
     left: 23px;
 }
 
+.synth button.reset-shape {
+    padding: 1rem;
+    background: #FF6577;
+    color: #fff;
+    font-size: large;
+    border-radius: 15px;
+    border: none;
+    cursor: pointer;
+}
+
+.fade-enter {
+    opacity: 0;
+    transform: translateY(-10px);
+}
+
+.fade-enter-active {
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 300ms, transform 300ms;
+}
+
+.fade-exit {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.fade-exit-active {
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: opacity 300ms, transform 300ms;
+}
+
+.visualiser {
+    margin-top: 2rem;
+    z-index: -1;
+    transition: transform 300ms ease-in-out;
+    position: relative;
+    /* Ensure it moves smoothly without abrupt changes */
+}
+
+.canvas-shape-enter-active~.visualiser,
+.canvas-shape-exit-active~.visualiser {
+    transform: translateY(0);
+}
+
 .drag-box {
     display: flex;
     justify-content: center;

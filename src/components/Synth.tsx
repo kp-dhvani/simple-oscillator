@@ -4,6 +4,7 @@ import {
   DraggableData,
   DraggableEventHandler,
 } from 'react-draggable';
+import { CSSTransition } from 'react-transition-group';
 import Draggable from './Draggable';
 import Visualiser from './Visualiser';
 import { useSynthAudioContext } from './SynthAudioContextProvider';
@@ -169,7 +170,12 @@ const Synth = () => {
   };
   return (
     <div className='synth'>
-      {!showNonInteractiveShape ? (
+      <CSSTransition
+        in={!showNonInteractiveShape}
+        timeout={300}
+        classNames='fade'
+        unmountOnExit
+      >
         <div className='drag'>
           <Draggable
             isPlaying={isDragPlaying}
@@ -179,7 +185,13 @@ const Synth = () => {
           />
           <NonInteractiveShape onClick={handleNonInteractiveShapeClick} />
         </div>
-      ) : (
+      </CSSTransition>
+      <CSSTransition
+        in={showNonInteractiveShape}
+        timeout={300}
+        classNames='fade'
+        unmountOnExit
+      >
         <>
           <div className='canvas-shape'>
             <InteractiveShape
@@ -190,10 +202,15 @@ const Synth = () => {
             />
           </div>
           <div>
-            <h4>back to drag synth</h4>
+            <button
+              className='reset-shape'
+              onClick={handleNonInteractiveShapeClick}
+            >
+              show drag synth
+            </button>
           </div>
         </>
-      )}
+      </CSSTransition>
       <div className='visualiser' style={{ marginTop: '2rem', zIndex: -1 }}>
         <Visualiser
           analyser={analyserNode}
