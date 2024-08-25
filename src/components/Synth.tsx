@@ -182,8 +182,8 @@ const Synth = () => {
             onDragStart={onDragStart}
             onDragStop={onDragStop}
             handleDrag={handleDrag}
+            onNoninteractiveShapeClick={handleNonInteractiveShapeClick}
           />
-          <NonInteractiveShape onClick={handleNonInteractiveShapeClick} />
         </div>
       </CSSTransition>
       <CSSTransition

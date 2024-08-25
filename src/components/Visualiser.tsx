@@ -81,9 +81,9 @@ const Visualiser: React.FC<VisualiserProps> = ({ isPlaying, analyser }) => {
       ref={canvasRef}
       style={{
         width: '100%',
-        maxWidth: '600px',
+        maxWidth: '800px',
         height: 'auto',
-        aspectRatio: '2 / 1', // Maintains a 600x300 aspect ratio
+        aspectRatio: '2 / 1',
         border: `5px solid ${isPlaying ? '#FF6577' : '#b3b3b3'}`,
       }}
     />

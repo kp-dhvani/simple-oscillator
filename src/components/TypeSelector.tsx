@@ -12,10 +12,7 @@ const TypeSelector: React.FC<TypeSelectorProps> = ({
     onTypeSelect(event.target.value as OscillatorType);
   };
   return (
-    <div
-      className='wave-type-selector'
-      style={styles.container as React.CSSProperties}
-    >
+    <div className='wave-type-selector'>
       <label htmlFor='waveform-type' style={styles.label}>
         Oscillator
       </label>
@@ -35,12 +32,6 @@ const TypeSelector: React.FC<TypeSelectorProps> = ({
 };
 
 const styles = {
-  container: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
   label: {
     marginBottom: '10px',
     fontSize: '16px',

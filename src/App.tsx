@@ -5,7 +5,7 @@ import Synth from './components/Synth';
 function SimpleSynth() {
   return (
     <div className='Simple-Synth'>
-      <p>Simple Synth</p>
+      <p style={{ textAlign: 'center' }}>Simple Synth</p>
       <Synth />
     </div>
   );

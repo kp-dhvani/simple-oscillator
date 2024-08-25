@@ -4,11 +4,13 @@ import Draggable, {
   DraggableEvent,
   DraggableEventHandler,
 } from 'react-draggable';
+import NonInteractiveShape from './NonInteractiveShape';
 
 interface DraggableComponentProps {
   onDragStart: DraggableEventHandler;
   onDragStop: DraggableEventHandler;
   handleDrag: DraggableEventHandler;
+  onNoninteractiveShapeClick: () => void;
   isPlaying: boolean;
 }
 
@@ -17,6 +19,7 @@ const DraggableComponent: React.FC<DraggableComponentProps> = ({
   onDragStart,
   onDragStop,
   handleDrag,
+  onNoninteractiveShapeClick,
 }) => {
   const dragElementRef = useRef<HTMLButtonElement>(null);
 
@@ -25,6 +28,7 @@ const DraggableComponent: React.FC<DraggableComponentProps> = ({
   };
   return (
     <div className='drag-box'>
+      <NonInteractiveShape onClick={onNoninteractiveShapeClick} />
       <div
         style={{
           border: `10px solid ${isPlaying ? '#FF6577' : '#b3b3b3'}`,
