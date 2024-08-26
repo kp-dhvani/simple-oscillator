@@ -10,7 +10,6 @@ import Visualiser from './Visualiser';
 import { useSynthAudioContext } from './SynthAudioContextProvider';
 import WaveTypeSelector from './TypeSelector';
 import InteractiveShape, { Shapes } from './InteractiveShape';
-import NonInteractiveShape from './NonInteractiveShape';
 import './Synth.css';
 
 const Synth = () => {
@@ -22,24 +21,13 @@ const Synth = () => {
     null,
   );
   const [gainNode, setGainNode] = useState<GainNode | null>();
-  const { audioContextInstance } = useSynthAudioContext();
-  const [analyserNode, setAnalyserNode] = useState<AnalyserNode | null>(null);
+  const { audioContextInstance, analyserNode } = useSynthAudioContext();
   const [frequency, setFrequency] = useState(440);
   const [amplitude, setAmplitude] = useState(0);
   const [waveType, setWaveType] = useState<OscillatorType>(Shapes.Sine);
   const [isShapeLocked, setIsShapeLocked] = useState(false);
   const [shapeDimensionChangeDelta, setShapeDimensionChangeDelta] = useState(0);
   const [showNonInteractiveShape, setShowNonInteractiveShape] = useState(false);
-
-  useEffect(() => {
-    const analyser = audioContextInstance.createAnalyser();
-    analyser.fftSize = 2048;
-    setAnalyserNode(analyser);
-    return () => {
-      setShapeOscillator(null);
-      setAnalyserNode(null);
-    };
-  }, []);
 
   useEffect(() => {
     if (isShapeLocked) {

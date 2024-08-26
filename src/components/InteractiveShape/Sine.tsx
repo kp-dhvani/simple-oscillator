@@ -1,6 +1,7 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { KonvaEventObject } from 'konva/lib/Node';
 import { Arc, Stage, Layer, Circle, Rect, Shape } from 'react-konva';
+import { useSynthAudioContext } from '../SynthAudioContextProvider';
 
 interface InteractiveSineProps {
   isLocked: boolean;
@@ -13,44 +14,34 @@ const InteractiveSine: React.FC<InteractiveSineProps> = ({
   lockShape,
   setShapeDimensionChangeDelta,
 }) => {
+  const synthAudioContext = useSynthAudioContext();
+  const analyserNode = synthAudioContext.analyserNode;
+
   const initialRadius = 140;
   const [radius, setRadius] = useState({ x: initialRadius, y: initialRadius });
   const initialMouseYRef = useRef<number | null>(null);
-  const [dimensions, setDimensions] = useState({
-    width: window.innerWidth * 0.8,
-    height: window.innerWidth * 0.8 * (550 / 500),
-  });
 
-  useEffect(() => {
-    const handleResize = () => {
-      setDimensions({
-        width: window.innerWidth * 0.8,
-        height: window.innerWidth * 0.8 * (550 / 500),
-      });
-    };
-
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
-  const handleShapeClick = (e: KonvaEventObject<MouseEvent>) => {
+  const handleShapeClick = (e: KonvaEventObject<MouseEvent | TouchEvent>) => {
     if (isLocked) {
       lockShape(false);
       initialMouseYRef.current = null;
       setRadius({ x: initialRadius, y: initialRadius });
     } else {
       lockShape(true);
-      initialMouseYRef.current = e.evt.clientY;
+      const clientY =
+        'touches' in e.evt ? e.evt.touches[0].clientY : e.evt.clientY;
+      initialMouseYRef.current = clientY;
     }
   };
 
   // Handle mouse move event on the shape
-  const handleMouseMove = (e: KonvaEventObject<MouseEvent>) => {
+  const handleMouseMove = (e: KonvaEventObject<MouseEvent | TouchEvent>) => {
     if (isLocked && initialMouseYRef.current !== null) {
-      const currentMouseY = e.evt.clientY;
+      const currentMouseY =
+        'touches' in e.evt ? e.evt.touches[0].clientY : e.evt.clientY;
       const deltaY = initialMouseYRef.current - currentMouseY;
       const newUpperRadiusY = Math.max(80, radius.y + deltaY);
-      setShapeDimensionChangeDelta(newUpperRadiusY - initialRadius);
+      setShapeDimensionChangeDelta(deltaY);
       setRadius({ x: radius.x, y: newUpperRadiusY });
 
       // Update the initial mouse position for continuous dragging
@@ -58,19 +49,22 @@ const InteractiveSine: React.FC<InteractiveSineProps> = ({
     }
   };
 
-  // Handle mouse up event to release the lock
   const handleMouseUp = () => {
     if (isLocked) {
       lockShape(false);
       initialMouseYRef.current = null;
+      setRadius({ x: initialRadius, y: initialRadius });
     }
   };
+
   return (
     <Stage
       width={400}
       height={520}
-      onMouseMove={handleMouseMove} // Update shape while dragging
-      onMouseUp={handleMouseUp} // Release lock on mouse up
+      onMouseMove={handleMouseMove}
+      onMouseUp={handleMouseUp}
+      onTouchMove={handleMouseMove}
+      onTouchEnd={handleMouseUp}
       offsetY={-120}
     >
       <Layer>
@@ -111,18 +105,21 @@ const InteractiveSine: React.FC<InteractiveSineProps> = ({
           }}
           fill={'#FF6577'}
           onClick={handleShapeClick} // Toggle locking the shape on click
+          onTouchStart={handleShapeClick}
         />
         <Circle x={170} y={170} fill={'#fff'} radius={20} />
         <Circle x={230} y={170} fill={'#fff'} radius={20} />
         {isLocked ? (
-          <Arc
-            x={200}
-            y={230}
-            angle={180}
-            innerRadius={0}
-            outerRadius={90}
-            fill={'#fff'}
-          />
+          <>
+            <Arc
+              x={200}
+              y={220}
+              angle={180}
+              innerRadius={0}
+              outerRadius={90}
+              fill={'#fff'}
+            />
+          </>
         ) : (
           <Rect
             x={190}
@@ -156,9 +153,9 @@ const InteractiveSine: React.FC<InteractiveSineProps> = ({
         {/* left leg */}
         <Rect
           x={150}
-          y={310}
+          y={305}
           width={35}
-          height={60}
+          height={55}
           cornerRadius={50}
           fill={'#FF6577'}
           offsetY={-10}
@@ -166,9 +163,9 @@ const InteractiveSine: React.FC<InteractiveSineProps> = ({
         {/* right leg */}
         <Rect
           x={210}
-          y={310}
+          y={305}
           width={35}
-          height={60}
+          height={55}
           cornerRadius={50}
           fill={'#FF6577'}
           offsetY={-10}

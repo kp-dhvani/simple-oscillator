@@ -3,9 +3,14 @@ import React, { useEffect, useRef } from 'react';
 interface VisualiserProps {
   analyser: AnalyserNode | null;
   isPlaying: boolean;
+  maxWidth?: string;
 }
 
-const Visualiser: React.FC<VisualiserProps> = ({ isPlaying, analyser }) => {
+const Visualiser: React.FC<VisualiserProps> = ({
+  isPlaying,
+  analyser,
+  maxWidth,
+}) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const animationFrameIdRef = useRef<number | null>(null);
 
@@ -81,7 +86,7 @@ const Visualiser: React.FC<VisualiserProps> = ({ isPlaying, analyser }) => {
       ref={canvasRef}
       style={{
         width: '100%',
-        maxWidth: '800px',
+        maxWidth: maxWidth ? `${maxWidth}px` : '800px',
         height: 'auto',
         aspectRatio: '2 / 1',
         border: `5px solid ${isPlaying ? '#FF6577' : '#b3b3b3'}`,

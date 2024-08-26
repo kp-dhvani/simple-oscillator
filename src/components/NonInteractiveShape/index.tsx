@@ -12,25 +12,24 @@ const NonInteractiveShape: React.FC<NonInteractiveShapeProps> = ({
 
   return (
     <div className='non-interactive-shape'>
-      <Stage width={200} height={200} style={{ cursor: 'pointer' }}>
+      <Stage width={300} height={200} style={{ cursor: 'pointer' }}>
         <Layer
           onMouseEnter={() => setHovered(true)}
           onMouseLeave={() => setHovered(false)}
         >
           <Circle
             x={170}
-            y={100}
+            y={75}
             fill={hovered ? '#FF6577' : '#B3B3B3'}
             radius={40}
-            offsetX={-20}
             onClick={() => onClick()}
           />
-          <Circle x={165} y={90} fill={'#fff'} radius={5} />
-          <Circle x={195} y={90} fill={'#fff'} radius={5} />
+          <Circle x={150} y={60} fill={'#fff'} radius={5} />
+          <Circle x={190} y={60} fill={'#fff'} radius={5} />
           {hovered ? (
             <Arc
-              x={185}
-              y={110}
+              x={170}
+              y={75}
               angle={180}
               innerRadius={0}
               outerRadius={15}
@@ -38,10 +37,10 @@ const NonInteractiveShape: React.FC<NonInteractiveShapeProps> = ({
             />
           ) : (
             <Rect
-              x={175}
-              y={110}
-              width={20}
-              height={10}
+              x={160}
+              y={75}
+              width={18}
+              height={8}
               cornerRadius={50}
               fill={'#fff'}
             />

@@ -1,10 +1,13 @@
 class SynthAudioContext {
   private static instance?: SynthAudioContext;
   public readonly audioContextInstance: AudioContext;
+  public readonly analyserNode: AnalyserNode;
 
   private constructor() {
     this.audioContextInstance = new (window.AudioContext ||
       window.webkitAudioContext)();
+    this.analyserNode = this.audioContextInstance.createAnalyser();
+    this.analyserNode.fftSize = 2048;
   }
 
   public static getInstance(): SynthAudioContext {

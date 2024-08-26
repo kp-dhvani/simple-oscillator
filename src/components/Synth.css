@@ -21,8 +21,7 @@
 }
 
 .synth .non-interactive-shape {
-    z-index: 1;
-    top: -1rem;
+    top: 10px;
     position: absolute;
 }
 
@@ -81,6 +80,19 @@
 @media (min-width: 768px) {
     .synth {
         padding: 2rem 4rem;
+    }
+}
+
+@media (max-width: 767px) {
+    .synth .non-interactive-shape {
+        top: -2rem;
+        left: 0;
+    }
+}
+
+@media (max-width: 425px) {
+    .synth .non-interactive-shape {
+        left: -5rem;
     }
 }
 
