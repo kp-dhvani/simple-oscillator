@@ -19,7 +19,7 @@ const InteractiveSquare: React.FC<InteractiveSquareProps> = ({
   const initialMouseYRef = useRef<number | null>(null);
   const mainBodyRef = useRef<Konva.Rect>(null);
 
-  const handleShapeClick = (e: KonvaEventObject<MouseEvent>) => {
+  const handleShapeClick = (e: KonvaEventObject<MouseEvent | TouchEvent>) => {
     if (isLocked) {
       // If already locked, release the lock on click
       lockShape(false);
@@ -31,14 +31,17 @@ const InteractiveSquare: React.FC<InteractiveSquareProps> = ({
     } else {
       // Lock the shape and start tracking the mouse position
       lockShape(true);
-      initialMouseYRef.current = e.evt.clientY; // Capture initial mouse position
+      const clientY =
+        'touches' in e.evt ? e.evt.touches[0].clientY : e.evt.clientY;
+      initialMouseYRef.current = clientY; // Capture initial mouse position
     }
   };
 
   // Handle mouse move event on the shape
-  const handleMouseMove = (e: KonvaEventObject<MouseEvent>) => {
+  const handleMouseMove = (e: KonvaEventObject<MouseEvent | TouchEvent>) => {
     if (isLocked && initialMouseYRef.current !== null) {
-      const currentMouseY = e.evt.clientY;
+      const currentMouseY =
+        'touches' in e.evt ? e.evt.touches[0].clientY : e.evt.clientY;
       const deltaY = initialMouseYRef.current - currentMouseY;
       setShapeDimensionChangeDelta(deltaY);
       const newHeight = Math.max(140, height + deltaY);
@@ -73,8 +76,10 @@ const InteractiveSquare: React.FC<InteractiveSquareProps> = ({
       height={520}
       onMouseMove={handleMouseMove} // Update shape while dragging
       onMouseUp={handleMouseUp} // Release lock on mouse up
+      onTouchMove={handleMouseMove}
+      onTouchEnd={handleMouseUp}
     >
-      <Layer offsetY={-150}>
+      <Layer offsetY={-120}>
         {/* main body */}
         <Rect
           x={100}
@@ -85,6 +90,7 @@ const InteractiveSquare: React.FC<InteractiveSquareProps> = ({
           ref={mainBodyRef}
           cornerRadius={10}
           onClick={handleShapeClick}
+          onTouchStart={handleShapeClick}
         />
         <Circle x={170} y={190} fill={'#fff'} radius={20} />
         <Circle x={230} y={190} fill={'#fff'} radius={20} />

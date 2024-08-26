@@ -38,29 +38,12 @@ const InteractiveShape: React.FC<InteractiveShapeProps> = ({
       case Shapes.Square:
         return <Square {...props} />;
       case Shapes.Triangle:
-        return <Triangle />;
+        return <Triangle {...props} />;
       default:
         return <p>Not a supported wave type</p>;
     }
   };
-  return (
-    <div
-      className='interactive-shape'
-      style={{
-        zIndex: 1,
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        width: '100%',
-        maxWidth: '600px',
-        margin: '0 auto',
-        padding: '1rem',
-        boxSizing: 'border-box',
-      }}
-    >
-      {renderWave()}
-    </div>
-  );
+  return <div className='interactive-shape'>{renderWave()}</div>;
 };
 
 export default InteractiveShape;

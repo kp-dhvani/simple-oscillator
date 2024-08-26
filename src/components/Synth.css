@@ -20,6 +20,11 @@
     margin: 1rem 0 0;
 }
 
+.synth .interactive-shape {
+    display: flex;
+    justify-content: center;
+}
+
 .synth .non-interactive-shape {
     top: 10px;
     position: absolute;
