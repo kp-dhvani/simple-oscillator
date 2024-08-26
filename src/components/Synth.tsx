@@ -199,15 +199,15 @@ const Synth = () => {
           </div>
         </>
       </CSSTransition>
+      <div className='controls'>
+        <p>Frequency: {frequency}</p>
+        <WaveTypeSelector waveType={waveType} onTypeSelect={setWaveType} />
+      </div>
       <div className='visualiser' style={{ marginTop: '2rem', zIndex: -1 }}>
         <Visualiser
           analyser={analyserNode}
           isPlaying={isShapeOscillatorPlaying || isDragPlaying}
         />
-        <p>Frequency: {frequency}</p>
-      </div>
-      <div className='controls'>
-        <WaveTypeSelector waveType={waveType} onTypeSelect={setWaveType} />
       </div>
     </div>
   );

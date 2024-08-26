@@ -14,8 +14,9 @@ const TypeSelector: React.FC<TypeSelectorProps> = ({
   return (
     <div className='wave-type-selector'>
       <label htmlFor='waveform-type' style={styles.label}>
-        Oscillator
+        Oscillator Type
       </label>
+      <br />
       <select
         id='waveform-type'
         style={styles.select as React.CSSProperties}
@@ -38,8 +39,8 @@ const styles = {
     fontWeight: 'bold',
   },
   select: {
-    marginBottom: '20px',
-    padding: '10px',
+    marginTop: '10px',
+    padding: '8px',
     fontSize: '16px',
     borderRadius: '5px',
     border: '1px solid #ccc',

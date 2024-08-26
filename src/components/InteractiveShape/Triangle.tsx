@@ -16,21 +16,24 @@ const InteractiveTriangle: React.FC<InteractiveTrianlgeProps> = ({
   const [topY, setTopY] = useState(100);
   const initialMouseYRef = useRef<number | null>(null);
 
-  const handleShapeClick = (e: KonvaEventObject<MouseEvent>) => {
+  const handleShapeClick = (e: KonvaEventObject<MouseEvent | TouchEvent>) => {
     if (isLocked) {
       lockShape(false);
       initialMouseYRef.current = null;
     } else {
       // Lock the shape and start tracking the mouse position
       lockShape(true);
-      initialMouseYRef.current = e.evt.clientY; // Capture initial mouse position
+      const clientY =
+        'touches' in e.evt ? e.evt.touches[0].clientY : e.evt.clientY;
+      initialMouseYRef.current = clientY; // Capture initial mouse position
       setTopY(100);
     }
   };
 
-  const handleMouseMove = (e: any) => {
+  const handleMouseMove = (e: KonvaEventObject<MouseEvent | TouchEvent>) => {
     if (isLocked && initialMouseYRef.current !== null) {
-      const currentMouseY = e.evt.clientY;
+      const currentMouseY =
+        'touches' in e.evt ? e.evt.touches[0].clientY : e.evt.clientY;
       const deltaY = initialMouseYRef.current - currentMouseY;
       const newTopY = topY - deltaY;
       setShapeDimensionChangeDelta(deltaY);
@@ -53,8 +56,11 @@ const InteractiveTriangle: React.FC<InteractiveTrianlgeProps> = ({
       height={520}
       onMouseMove={handleMouseMove} // Update shape while dragging
       onMouseUp={handleMouseUp} // Release lock on mouse up
+      onTouchMove={handleMouseMove}
+      onTouchEnd={handleMouseUp}
+      offsetY={-120}
     >
-      <Layer offsetY={-120}>
+      <Layer>
         <Shape
           sceneFunc={(context, shape) => {
             const radius = 10;
@@ -87,6 +93,7 @@ const InteractiveTriangle: React.FC<InteractiveTrianlgeProps> = ({
           }}
           fill='#FF4582'
           onClick={handleShapeClick}
+          onTouchStart={handleShapeClick}
         />
         <Circle x={150} y={200} fill={'#fff'} radius={15} />
         <Circle x={210} y={200} fill={'#fff'} radius={15} />
