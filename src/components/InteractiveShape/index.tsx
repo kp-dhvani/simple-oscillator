@@ -36,7 +36,7 @@ const InteractiveShape: React.FC<InteractiveShapeProps> = ({
       case Shapes.Sine:
         return <Sine {...props} />;
       case Shapes.Square:
-        return <Square />;
+        return <Square {...props} />;
       case Shapes.Triangle:
         return <Triangle />;
       default:

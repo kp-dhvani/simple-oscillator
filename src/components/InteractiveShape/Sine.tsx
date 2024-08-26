@@ -1,7 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { KonvaEventObject } from 'konva/lib/Node';
 import { Arc, Stage, Layer, Circle, Rect, Shape } from 'react-konva';
-import { useSynthAudioContext } from '../SynthAudioContextProvider';
 
 interface InteractiveSineProps {
   isLocked: boolean;
@@ -14,9 +13,6 @@ const InteractiveSine: React.FC<InteractiveSineProps> = ({
   lockShape,
   setShapeDimensionChangeDelta,
 }) => {
-  const synthAudioContext = useSynthAudioContext();
-  const analyserNode = synthAudioContext.analyserNode;
-
   const initialRadius = 140;
   const [radius, setRadius] = useState({ x: initialRadius, y: initialRadius });
   const initialMouseYRef = useRef<number | null>(null);
@@ -110,16 +106,14 @@ const InteractiveSine: React.FC<InteractiveSineProps> = ({
         <Circle x={170} y={170} fill={'#fff'} radius={20} />
         <Circle x={230} y={170} fill={'#fff'} radius={20} />
         {isLocked ? (
-          <>
-            <Arc
-              x={200}
-              y={220}
-              angle={180}
-              innerRadius={0}
-              outerRadius={90}
-              fill={'#fff'}
-            />
-          </>
+          <Arc
+            x={200}
+            y={220}
+            angle={180}
+            innerRadius={0}
+            outerRadius={90}
+            fill={'#fff'}
+          />
         ) : (
           <Rect
             x={190}
