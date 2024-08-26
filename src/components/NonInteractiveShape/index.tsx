@@ -16,14 +16,14 @@ const NonInteractiveShape: React.FC<NonInteractiveShapeProps> = ({
         <Layer
           onMouseEnter={() => setHovered(true)}
           onMouseLeave={() => setHovered(false)}
+          onClick={() => onClick()}
+          onTouchStart={() => onClick()}
         >
           <Circle
             x={170}
             y={75}
             fill={hovered ? '#FF6577' : '#B3B3B3'}
             radius={40}
-            onClick={() => onClick()}
-            onTouchStart={() => onClick()}
           />
           <Circle x={150} y={60} fill={'#fff'} radius={5} />
           <Circle x={190} y={60} fill={'#fff'} radius={5} />

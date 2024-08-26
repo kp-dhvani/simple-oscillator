@@ -92,8 +92,8 @@ const InteractiveSquare: React.FC<InteractiveSquareProps> = ({
           onClick={handleShapeClick}
           onTouchStart={handleShapeClick}
         />
-        <Circle x={170} y={190} fill={'#fff'} radius={20} />
-        <Circle x={230} y={190} fill={'#fff'} radius={20} />
+        <Circle x={170} y={190} fill={'#fff'} radius={15} />
+        <Circle x={230} y={190} fill={'#fff'} radius={15} />
 
         {/* face */}
         {isLocked ? (

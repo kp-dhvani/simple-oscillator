@@ -103,8 +103,8 @@ const InteractiveSine: React.FC<InteractiveSineProps> = ({
           onClick={handleShapeClick} // Toggle locking the shape on click
           onTouchStart={handleShapeClick}
         />
-        <Circle x={150} y={190} fill={'#fff'} radius={20} />
-        <Circle x={250} y={190} fill={'#fff'} radius={20} />
+        <Circle x={150} y={170} fill={'#fff'} radius={15} />
+        <Circle x={250} y={170} fill={'#fff'} radius={15} />
         {isLocked ? (
           <Arc
             x={200}
