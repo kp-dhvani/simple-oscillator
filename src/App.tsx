@@ -1,16 +1,16 @@
 import React from 'react';
 import './App.css';
-import Synth from './components/Synth';
+import Oscillator from './components/Oscillator';
 import ManageAudioContextState from './components/ManageAudioContextState';
 
-function SimpleSynth() {
+function SimpleOscillator() {
   return (
-    <div className='Simple-Synth'>
-      <p style={{ textAlign: 'center' }}>Simple Synth</p>
-      <Synth />
+    <div className='simple-oscillator'>
+      <p style={{ textAlign: 'center' }}>Simple Oscillator</p>
+      <Oscillator />
       <ManageAudioContextState />
     </div>
   );
 }
 
-export default SimpleSynth;
+export default SimpleOscillator;

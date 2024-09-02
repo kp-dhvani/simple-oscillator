@@ -1,1 +1,1 @@
-# Simple Synth
+# Simple Oscilllator
