@@ -12,7 +12,7 @@ const NonInteractiveShape: React.FC<NonInteractiveShapeProps> = ({
 
   return (
     <div className='non-interactive-shape'>
-      <Stage width={300} height={200} style={{ cursor: 'pointer' }} offsetY={5}>
+      <Stage width={300} height={200} style={{ cursor: 'pointer' }}>
         <Layer
           onMouseEnter={() => setHovered(true)}
           onMouseLeave={() => setHovered(false)}

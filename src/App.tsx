@@ -6,7 +6,6 @@ import ManageAudioContextState from './components/ManageAudioContextState';
 function SimpleOscillator() {
   return (
     <div className='simple-oscillator'>
-      <p style={{ textAlign: 'center' }}>Simple Oscillator</p>
       <Oscillator />
       <ManageAudioContextState />
     </div>

@@ -36,6 +36,7 @@ const DraggableComponent: React.FC<DraggableComponentProps> = ({
           height: '420px',
           position: 'relative',
           backgroundColor: isPlaying ? '#FF6577' : '#1C1C1D',
+          marginTop: '5rem',
         }}
       >
         <Draggable
