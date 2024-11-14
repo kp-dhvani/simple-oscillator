@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Arc, Stage, Layer, Circle, Rect, Shape } from 'react-konva';
+import { Arc, Stage, Layer, Circle, Rect } from 'react-konva';
 
 interface NonInteractiveShapeProps {
   onClick: () => void;
@@ -12,7 +12,7 @@ const NonInteractiveShape: React.FC<NonInteractiveShapeProps> = ({
 
   return (
     <div className='non-interactive-shape'>
-      <Stage width={300} height={200} style={{ cursor: 'pointer' }}>
+      <Stage width={300} height={200} style={{ cursor: 'pointer' }} offsetY={5}>
         <Layer
           onMouseEnter={() => setHovered(true)}
           onMouseLeave={() => setHovered(false)}

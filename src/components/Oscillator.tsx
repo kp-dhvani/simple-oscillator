@@ -68,7 +68,6 @@ const Synth = () => {
       frequency,
       audioContextInstance.currentTime + 0.1,
     );
-    // Create a looping envelope for the gain
     osc.connect(audioContextInstance.destination);
     osc.start();
     setIsShapeOscillatorPlaying(true);
