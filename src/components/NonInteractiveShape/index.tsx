@@ -12,13 +12,14 @@ const NonInteractiveShape: React.FC<NonInteractiveShapeProps> = ({
 
   return (
     <div className='non-interactive-shape'>
-      <Stage width={300} height={200} style={{ cursor: 'pointer' }}>
-        <Layer
-          onMouseEnter={() => setHovered(true)}
-          onMouseLeave={() => setHovered(false)}
-          onClick={() => onClick()}
-          onTouchStart={() => onClick()}
-        >
+      <Stage
+        width={300}
+        height={200}
+        style={{ cursor: 'pointer' }}
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
+      >
+        <Layer onClick={() => onClick()} onTouchStart={() => onClick()}>
           <Circle
             x={170}
             y={75}
