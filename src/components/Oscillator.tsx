@@ -193,13 +193,20 @@ const Synth = () => {
               className='reset-shape'
               onClick={handleNonInteractiveShapeClick}
             >
-              show drag synth
+              show drag oscillator
             </button>
           </div>
         </>
       </CSSTransition>
       <div className='controls'>
-        <p>Drag around the box and check out the waveform below</p>
+        {!showNonInteractiveShape ? (
+          <p>Drag around the box and check out the waveform below</p>
+        ) : (
+          <p>
+            Touch the shape, drag it up and down, and check out the waveform
+            below
+          </p>
+        )}
         <p>Frequency: {frequency}</p>
         <WaveTypeSelector waveType={waveType} onTypeSelect={setWaveType} />
       </div>
