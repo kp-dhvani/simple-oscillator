@@ -199,6 +199,7 @@ const Synth = () => {
         </>
       </CSSTransition>
       <div className='controls'>
+        <p>Drag around the box and check out the waveform below</p>
         <p>Frequency: {frequency}</p>
         <WaveTypeSelector waveType={waveType} onTypeSelect={setWaveType} />
       </div>
