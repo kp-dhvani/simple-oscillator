@@ -55,7 +55,7 @@ const Synth = () => {
         clampedFreq,
         audioContextInstance.currentTime + 0.1,
       );
-      setFrequency(clampedFreq);
+      setFrequency(Math.floor(clampedFreq));
     }
   };
 

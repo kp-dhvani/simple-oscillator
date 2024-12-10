@@ -3,6 +3,7 @@ import Sawtooth from './Sawtooth';
 import Sine from './Sine';
 import Square from './Square';
 import Triangle from './Triangle';
+import './Shape.css';
 
 export enum Shapes {
   Sine = 'sine',

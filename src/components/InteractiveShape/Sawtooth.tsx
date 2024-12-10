@@ -20,6 +20,7 @@ const InteractiveSawtooth: React.FC<InteractiveSawtoothProps> = ({
   const mainBodyRef = useRef<Konva.Rect>(null);
 
   const handleShapeClick = (e: KonvaEventObject<MouseEvent | TouchEvent>) => {
+    e.evt.preventDefault();
     if (isLocked) {
       lockShape(false);
       initialMouseYRef.current = null;
@@ -36,6 +37,7 @@ const InteractiveSawtooth: React.FC<InteractiveSawtoothProps> = ({
 
   // Handle mouse move event on the shape
   const handleMouseMove = (e: KonvaEventObject<MouseEvent | TouchEvent>) => {
+    e.evt.preventDefault();
     if (isLocked && initialMouseYRef.current !== null) {
       const currentMouseY =
         'touches' in e.evt ? e.evt.touches[0].clientY : e.evt.clientY;
