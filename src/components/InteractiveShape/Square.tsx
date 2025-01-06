@@ -1,7 +1,8 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { KonvaEventObject } from 'konva/lib/Node';
 import { Stage, Layer, Circle, Rect, Arc } from 'react-konva';
 import Konva from 'konva';
+import Hammer from 'hammerjs';
 
 interface InteractiveSquareProps {
   isLocked: boolean;
@@ -16,71 +17,57 @@ const InteractiveSquare: React.FC<InteractiveSquareProps> = ({
 }) => {
   const initialHeight = 200;
   const [height, setHeight] = useState(initialHeight);
-  const initialMouseYRef = useRef<number | null>(null);
   const mainBodyRef = useRef<Konva.Rect>(null);
 
-  const handleShapeClick = (e: KonvaEventObject<MouseEvent | TouchEvent>) => {
-    e.evt.preventDefault();
-    if (isLocked) {
-      // If already locked, release the lock on click
-      lockShape(false);
-      initialMouseYRef.current = null;
-      setHeight(initialHeight);
-      if (mainBodyRef.current) {
-        mainBodyRef.current.y(100);
-      }
-    } else {
-      // Lock the shape and start tracking the mouse position
-      lockShape(true);
-      const clientY =
-        'touches' in e.evt ? e.evt.touches[0].clientY : e.evt.clientY;
-      initialMouseYRef.current = clientY; // Capture initial mouse position
-    }
-  };
+  useEffect(() => {
+    const mainBody = mainBodyRef.current;
+    if (!mainBody) return;
 
-  // Handle mouse move event on the shape
-  const handleMouseMove = (e: KonvaEventObject<MouseEvent | TouchEvent>) => {
-    e.evt.preventDefault();
-    if (isLocked && initialMouseYRef.current !== null) {
-      const currentMouseY =
-        'touches' in e.evt ? e.evt.touches[0].clientY : e.evt.clientY;
-      const deltaY = initialMouseYRef.current - currentMouseY;
-      setShapeDimensionChangeDelta(deltaY);
-      const newHeight = Math.max(140, height + deltaY);
+    // Get the actual HTML element for the shape
+    const shapeElement = mainBody.getStage()?.container();
+    if (!shapeElement) return;
+
+    const hammer = new Hammer(shapeElement);
+
+    // Configure for vertical panning
+    hammer.get('pan').set({
+      direction: Hammer.DIRECTION_VERTICAL,
+      threshold: 0,
+    });
+
+    hammer.on('pan', (ev) => {
+      const deltaY = -ev.deltaY; // Invert for natural direction
+      const newHeight = Math.max(140, initialHeight + deltaY);
+
       setHeight(newHeight);
+      setShapeDimensionChangeDelta(deltaY);
+      lockShape(true);
+
       if (mainBodyRef.current) {
-        const newY = mainBodyRef.current.y() - deltaY;
+        const newY = 100 + (initialHeight - newHeight);
         if (newY >= 160) {
           mainBodyRef.current.y(160);
         } else {
           mainBodyRef.current.y(newY);
         }
       }
-      // Update the initial mouse position for continuous dragging
-      initialMouseYRef.current = currentMouseY;
-    }
-  };
+    });
 
-  // Handle mouse up event to release the lock
-  const handleMouseUp = () => {
-    if (isLocked) {
-      lockShape(false);
-      initialMouseYRef.current = null;
+    hammer.on('panend', () => {
       setHeight(initialHeight);
+      lockShape(false);
       if (mainBodyRef.current) {
         mainBodyRef.current.y(100);
       }
-    }
-  };
+    });
+
+    return () => {
+      hammer.destroy();
+    };
+  }, [setShapeDimensionChangeDelta]);
+
   return (
-    <Stage
-      width={400}
-      height={520}
-      onMouseMove={handleMouseMove} // Update shape while dragging
-      onMouseUp={handleMouseUp} // Release lock on mouse up
-      onTouchMove={handleMouseMove}
-      onTouchEnd={handleMouseUp}
-    >
+    <Stage width={400} height={520}>
       <Layer offsetY={-120}>
         {/* main body */}
         <Rect
@@ -91,8 +78,6 @@ const InteractiveSquare: React.FC<InteractiveSquareProps> = ({
           fill={'#00B6EE'}
           ref={mainBodyRef}
           cornerRadius={10}
-          onClick={handleShapeClick}
-          onTouchStart={handleShapeClick}
         />
         <Circle x={170} y={190} fill={'#fff'} radius={15} />
         <Circle x={230} y={190} fill={'#fff'} radius={15} />
@@ -138,14 +123,6 @@ const InteractiveSquare: React.FC<InteractiveSquareProps> = ({
           fill={'#00B6EE'}
           rotation={isLocked ? -60 : 0}
         />
-        {/* <Rect
-          x={305}
-          y={195}
-          width={35}
-          height={60}
-          cornerRadius={50}
-          fill={'#00B6EE'}
-        /> */}
         {/* left leg */}
         <Rect
           x={150}

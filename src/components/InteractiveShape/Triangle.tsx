@@ -1,6 +1,6 @@
-import React, { useRef, useState } from 'react';
-import { KonvaEventObject } from 'konva/lib/Node';
+import React, { useEffect, useRef, useState } from 'react';
 import { Arc, Stage, Layer, Circle, Rect, Shape } from 'react-konva';
+import Konva from 'konva';
 
 interface InteractiveTrianlgeProps {
   isLocked: boolean;
@@ -13,55 +13,47 @@ const InteractiveTriangle: React.FC<InteractiveTrianlgeProps> = ({
   lockShape,
   setShapeDimensionChangeDelta,
 }) => {
-  const [topY, setTopY] = useState(100);
-  const initialMouseYRef = useRef<number | null>(null);
+  const initialTopY = 100;
+  const [topY, setTopY] = useState(initialTopY);
+  const shapeRef = useRef<Konva.Shape>(null);
 
-  const handleShapeClick = (e: KonvaEventObject<MouseEvent | TouchEvent>) => {
-    e.evt.preventDefault();
-    if (isLocked) {
-      lockShape(false);
-      initialMouseYRef.current = null;
-    } else {
-      // Lock the shape and start tracking the mouse position
+  useEffect(() => {
+    const mainBody = shapeRef.current;
+    if (!mainBody) return;
+
+    // get the actual HTML element for the shape
+    const shapeElement = mainBody.getStage()?.container();
+    if (!shapeElement) return;
+
+    const hammer = new Hammer(shapeElement);
+
+    // configure for vertical panning
+    hammer.get('pan').set({
+      direction: Hammer.DIRECTION_VERTICAL,
+      threshold: 0,
+    });
+
+    hammer.on('pan', (ev) => {
+      const deltaY = ev.deltaY; // invert for natural direction
+      const newTopY = Math.min(140, 100 + deltaY);
+
+      setTopY(newTopY);
+      setShapeDimensionChangeDelta(-deltaY);
       lockShape(true);
-      const clientY =
-        'touches' in e.evt ? e.evt.touches[0].clientY : e.evt.clientY;
-      initialMouseYRef.current = clientY; // Capture initial mouse position
-      setTopY(100);
-    }
-  };
+    });
 
-  const handleMouseMove = (e: KonvaEventObject<MouseEvent | TouchEvent>) => {
-    e.evt.preventDefault();
-    if (isLocked && initialMouseYRef.current !== null) {
-      const currentMouseY =
-        'touches' in e.evt ? e.evt.touches[0].clientY : e.evt.clientY;
-      const deltaY = initialMouseYRef.current - currentMouseY;
-      const newTopY = topY - deltaY;
-      setShapeDimensionChangeDelta(deltaY);
-      setTopY(newTopY >= 140 ? 140 : newTopY);
-      initialMouseYRef.current = currentMouseY;
-    }
-  };
-
-  const handleMouseUp = () => {
-    if (isLocked) {
+    hammer.on('panend', () => {
+      setTopY(initialTopY);
       lockShape(false);
-      initialMouseYRef.current = null;
-      setTopY(100);
-    }
-  };
+    });
+
+    return () => {
+      hammer.destroy();
+    };
+  }, [setShapeDimensionChangeDelta]);
 
   return (
-    <Stage
-      width={400}
-      height={520}
-      onMouseMove={handleMouseMove} // Update shape while dragging
-      onMouseUp={handleMouseUp} // Release lock on mouse up
-      onTouchMove={handleMouseMove}
-      onTouchEnd={handleMouseUp}
-      offsetY={-120}
-    >
+    <Stage width={400} height={520} offsetY={-120}>
       <Layer>
         <Shape
           sceneFunc={(context, shape) => {
@@ -94,8 +86,7 @@ const InteractiveTriangle: React.FC<InteractiveTrianlgeProps> = ({
             context.fillStrokeShape(shape);
           }}
           fill='#FF4582'
-          onClick={handleShapeClick}
-          onTouchStart={handleShapeClick}
+          ref={shapeRef}
         />
         <Circle x={150} y={200} fill={'#fff'} radius={15} />
         <Circle x={210} y={200} fill={'#fff'} radius={15} />
@@ -158,26 +149,6 @@ const InteractiveTriangle: React.FC<InteractiveTrianlgeProps> = ({
           cornerRadius={50}
           fill={'#FF4582'}
         />
-
-        {/* 
-<Rect
-          x={85}
-          y={200}
-          width={35}
-          height={60}
-          cornerRadius={50}
-          fill={'#FF4582'}
-          rotation={!isLocked ? 120 : 40}
-        />
-        <Rect
-          x={285}
-          y={230}
-          width={35}
-          height={60}
-          cornerRadius={50}
-          fill={'#FF4582'}
-          rotation={!isLocked ? -120 : -40}
-        /> */}
       </Layer>
     </Stage>
   );

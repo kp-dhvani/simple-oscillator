@@ -1,6 +1,7 @@
-import React, { useRef, useState } from 'react';
-import { KonvaEventObject } from 'konva/lib/Node';
+import React, { useEffect, useRef, useState } from 'react';
 import { Arc, Stage, Layer, Circle, Rect, Shape } from 'react-konva';
+import Konva from 'konva';
+import Hammer from 'hammerjs';
 
 interface InteractiveSineProps {
   isLocked: boolean;
@@ -15,56 +16,45 @@ const InteractiveSine: React.FC<InteractiveSineProps> = ({
 }) => {
   const initialRadius = 140;
   const [radius, setRadius] = useState({ x: initialRadius, y: initialRadius });
-  const initialMouseYRef = useRef<number | null>(null);
+  const shapeRef = useRef<Konva.Shape>(null);
 
-  const handleShapeClick = (e: KonvaEventObject<MouseEvent | TouchEvent>) => {
-    e.evt.preventDefault();
-    if (isLocked) {
-      lockShape(false);
-      initialMouseYRef.current = null;
-      setRadius({ x: initialRadius, y: initialRadius });
-    } else {
-      lockShape(true);
-      const clientY =
-        'touches' in e.evt ? e.evt.touches[0].clientY : e.evt.clientY;
-      initialMouseYRef.current = clientY;
-    }
-  };
+  useEffect(() => {
+    const shape = shapeRef.current;
+    if (!shape) return;
 
-  // Handle mouse move event on the shape
-  const handleMouseMove = (e: KonvaEventObject<MouseEvent | TouchEvent>) => {
-    e.evt.preventDefault();
-    if (isLocked && initialMouseYRef.current !== null) {
-      const currentMouseY =
-        'touches' in e.evt ? e.evt.touches[0].clientY : e.evt.clientY;
-      const deltaY = initialMouseYRef.current - currentMouseY;
-      const newUpperRadiusY = Math.max(80, radius.y + deltaY);
+    // get the actual HTML element for the shape
+    const shapeElement = shape.getStage()?.container();
+    if (!shapeElement) return;
+
+    const hammer = new Hammer(shapeElement);
+
+    // configure for vertical panning
+    hammer.get('pan').set({
+      direction: Hammer.DIRECTION_VERTICAL,
+      threshold: 0,
+    });
+
+    hammer.on('pan', (ev) => {
+      const deltaY = -ev.deltaY; // invert for natural direction
+      const newUpperRadiusY = Math.max(80, initialRadius + deltaY);
+
+      setRadius((prev) => ({ x: prev.x, y: newUpperRadiusY }));
       setShapeDimensionChangeDelta(deltaY);
-      setRadius({ x: radius.x, y: newUpperRadiusY });
+      lockShape(true);
+    });
 
-      // Update the initial mouse position for continuous dragging
-      initialMouseYRef.current = currentMouseY;
-    }
-  };
-
-  const handleMouseUp = () => {
-    if (isLocked) {
-      lockShape(false);
-      initialMouseYRef.current = null;
+    hammer.on('panend', () => {
       setRadius({ x: initialRadius, y: initialRadius });
-    }
-  };
+      lockShape(false);
+    });
+
+    return () => {
+      hammer.destroy();
+    };
+  }, [setShapeDimensionChangeDelta]);
 
   return (
-    <Stage
-      width={400}
-      height={520}
-      onMouseMove={handleMouseMove}
-      onMouseUp={handleMouseUp}
-      onTouchMove={handleMouseMove}
-      onTouchEnd={handleMouseUp}
-      offsetY={-120}
-    >
+    <Stage width={400} height={520} offsetY={-120}>
       <Layer>
         <Shape
           sceneFunc={(context, shape) => {
@@ -74,7 +64,7 @@ const InteractiveSine: React.FC<InteractiveSineProps> = ({
 
             context.beginPath();
 
-            // Draw upper part of the ellipse
+            //draw upper part of the ellipse
             context.moveTo(centerX - radius.x, centerY);
             context.ellipse(
               centerX,
@@ -102,8 +92,7 @@ const InteractiveSine: React.FC<InteractiveSineProps> = ({
             context.fillStrokeShape(shape);
           }}
           fill={'#FF6577'}
-          onClick={handleShapeClick} // Toggle locking the shape on click
-          onTouchStart={handleShapeClick}
+          ref={shapeRef}
         />
         <Circle x={150} y={170} fill={'#fff'} radius={15} />
         <Circle x={250} y={170} fill={'#fff'} radius={15} />
