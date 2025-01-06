@@ -13,7 +13,7 @@ import InteractiveShape, { Shapes } from './InteractiveShape';
 import './Synth.css';
 
 const Synth = () => {
-  const [isDragPlaying, setIDragPlaying] = useState(false);
+  const [isDragPlaying, setIsDragPlaying] = useState(false);
   const [isShapeOscillatorPlaying, setIsShapeOscillatorPlaying] =
     useState(false);
   const [oscillator, setOscillator] = useState<OscillatorNode | null>();
@@ -87,7 +87,7 @@ const Synth = () => {
   };
 
   const onDragStart: DraggableEventHandler = () => {
-    setIDragPlaying(true);
+    setIsDragPlaying(true);
     const oscillator = audioContextInstance.createOscillator();
     const newGainNode = audioContextInstance.createGain();
     oscillator.type = waveType;
@@ -118,7 +118,7 @@ const Synth = () => {
         0.0001,
         audioContextInstance.currentTime + 0.03,
       );
-      setIDragPlaying(false);
+      setIsDragPlaying(false);
       gainNode.disconnect(analyserNode!);
       analyserNode?.disconnect(audioContextInstance.destination);
       oscillator.stop();

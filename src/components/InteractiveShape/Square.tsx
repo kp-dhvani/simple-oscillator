@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { KonvaEventObject } from 'konva/lib/Node';
 import { Stage, Layer, Circle, Rect, Arc } from 'react-konva';
 import Konva from 'konva';
 import Hammer from 'hammerjs';

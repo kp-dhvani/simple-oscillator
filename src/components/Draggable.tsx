@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Draggable, {
   DraggableData,
   DraggableEvent,
@@ -23,53 +23,42 @@ const DraggableComponent: React.FC<DraggableComponentProps> = ({
   onNoninteractiveShapeClick,
 }) => {
   const dragElementRef = useRef<HTMLButtonElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
+
+  useEffect(() => {
+    const updateDimensions = () => {
+      if (containerRef.current) {
+        const width = Math.min(1024, window.innerWidth - 32); // 32px for padding
+        const height = Math.min(420, width * 0.41); // Maintain aspect ratio
+        setDimensions({ width, height });
+      }
+    };
+
+    updateDimensions();
+    window.addEventListener('resize', updateDimensions);
+    return () => window.removeEventListener('resize', updateDimensions);
+  }, []);
 
   const saveCoordinates = (_: DraggableEvent, data: DraggableData) => {
     handleDrag(_, data);
-  };
-
-  const buttonStyle = {
-    height: '30px',
-    width: '30px',
-    borderRadius: '50%',
-    backgroundColor: isPlaying ? '#B3B3B3' : '#1B1B1D',
-    color: 'white',
-    cursor: 'grab',
-    position: 'absolute',
-    left: 'calc(50% - 10px)',
-    top: 'calc(50% - 0px)',
-    transform: 'translate(-50%, -50%)',
-    border: '2px solid #ccc',
-    boxShadow: 'inset 0 0 0 1px #b3b3b3',
-    ':hover': {
-      backgroundColor: '#B3B3B3',
-    },
-    ':hover::after': {
-      content: "'Drag me'",
-      position: 'absolute',
-      top: '100%',
-      left: '50%',
-      transform: 'translateX(-50%)',
-      marginTop: '5px',
-      fontSize: '12px',
-      color: 'white',
-      backgroundColor: 'rgba(0, 0, 0, 0.7)',
-      padding: '2px 5px',
-      borderRadius: '3px',
-    },
   };
 
   return (
     <div className='drag-box'>
       <NonInteractiveShape onClick={onNoninteractiveShapeClick} />
       <div
+        ref={containerRef}
         style={{
-          border: `10px solid ${isPlaying ? '#FF6577' : '#b3b3b3'}`,
-          width: '1024px',
-          height: '420px',
+          border: `min(10px, 2vw) solid ${isPlaying ? '#FF6577' : '#b3b3b3'}`,
+          width: dimensions.width ? `${dimensions.width}px` : '100%',
+          height: dimensions.height ? `${dimensions.height}px` : 'auto',
           position: 'relative',
           backgroundColor: isPlaying ? '#FF6577' : '#1C1C1D',
-          marginTop: '5rem',
+          marginTop: 'min(5rem, 10vw)',
+          maxWidth: '1024px',
+          margin: 'min(5rem, 10vw) auto 0',
+          overflow: 'hidden',
         }}
       >
         <Draggable
@@ -84,18 +73,20 @@ const DraggableComponent: React.FC<DraggableComponentProps> = ({
             className='drag-button'
             ref={dragElementRef}
             style={{
-              height: '30px',
-              width: '30px',
+              height: 'min(30px, 6vw)',
+              width: 'min(30px, 6vw)',
               borderRadius: '50%',
               backgroundColor: isPlaying ? '#B3B3B3' : '#1B1B1D',
               color: 'white',
               cursor: 'grab',
               position: 'absolute',
-              left: 'calc(50% - 10px)',
-              top: 'calc(50% - 0px)',
+              left: '50%',
+              top: '50%',
               transform: 'translate(-50%, -50%)',
               border: '2px solid #ccc',
               boxShadow: 'inset 0 0 0 1px #b3b3b3',
+              padding: 0,
+              margin: 0,
             }}
           ></button>
         </Draggable>

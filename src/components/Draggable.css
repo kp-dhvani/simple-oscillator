@@ -31,3 +31,28 @@
     padding: 10px;
     border-radius: 3px;
 }
+
+.drag-box {
+    width: 100%;
+    max-width: 1024px;
+    margin: 0 auto;
+    padding: 0 1rem;
+    box-sizing: border-box;
+}
+
+.drag-button:active {
+    cursor: grabbing;
+}
+
+@media (max-width: 768px) {
+    .drag-box {
+        padding: 0 0.5rem;
+    }
+}
+
+.drag-box,
+.drag-button {
+    touch-action: none;
+    -webkit-user-select: none;
+    user-select: none;
+}
