@@ -22,7 +22,8 @@ const DraggableComponent: React.FC<DraggableComponentProps> = ({
   handleDrag,
   onNoninteractiveShapeClick,
 }) => {
-  const dragElementRef = useRef<HTMLButtonElement>(null);
+  const dragButtonRef = useRef<HTMLButtonElement>(null);
+
   const containerRef = useRef<HTMLDivElement>(null);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
 
@@ -64,14 +65,14 @@ const DraggableComponent: React.FC<DraggableComponentProps> = ({
         <Draggable
           bounds='parent'
           grid={[1, 1]}
-          nodeRef={dragElementRef}
+          nodeRef={dragButtonRef as React.RefObject<HTMLElement>}
           onStart={onDragStart}
           onStop={onDragStop}
           onDrag={saveCoordinates}
         >
           <button
             className='drag-button'
-            ref={dragElementRef}
+            ref={dragButtonRef}
             style={{
               height: 'min(30px, 6vw)',
               width: 'min(30px, 6vw)',
